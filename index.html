@@ -1,1 +1,391 @@
-# Index
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رَفوف | الإدارة والتبادل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #0ea5e9;
+            --lamp-color: rgba(253, 224, 71, 0.35);
+        }
+
+        body { 
+            font-family: 'Cairo', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .bg-fixed-library {
+            position: fixed;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80') center/cover no-repeat;
+            z-index: -2;
+        }
+
+        .bg-overlay {
+            position: fixed; inset: 0; z-index: -1;
+            transition: all 0.5s ease;
+        }
+
+        body.light-mode .bg-overlay { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(1px); }
+        body.dark-mode .bg-overlay { background: rgba(2, 6, 23, 0.4); backdrop-filter: blur(2.5px); }
+
+        .lamp-glow {
+            position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+            width: 100vw; height: 600px;
+            background: radial-gradient(circle, var(--lamp-color) 0%, transparent 75%);
+            z-index: -1; opacity: 0; transition: opacity 0.6s ease; pointer-events: none;
+        }
+        body.light-mode .lamp-glow { opacity: 1; }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+        }
+
+        body.light-mode .glass {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .screen { position: fixed; inset: 0; display: none; flex-direction: column; z-index: 10; }
+        .screen.active { display: flex; }
+
+        .nav-bar {
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 500px; height: 75px;
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 100;
+        }
+
+        .announcement-bar {
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            white-space: nowrap; overflow: hidden; position: relative;
+        }
+
+        .marquee {
+            display: inline-block; padding-right: 100%;
+            animation: marquee 25s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .popular-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+    </style>
+</head>
+<body class="dark-mode">
+
+    <div class="bg-fixed-library"></div>
+    <div class="bg-overlay"></div>
+    <div class="lamp-glow"></div>
+
+    <!-- شريط الإعلان -->
+    <div id="system-announcement" class="fixed top-0 left-0 w-full h-8 z-[50] announcement-bar text-white text-[11px] font-bold hidden items-center">
+        <div class="marquee" id="ann-text">مرحباً بكم في رَفوف - عالم تبادل الكتب</div>
+    </div>
+
+    <!-- شاشة الدخول -->
+    <section id="scr-login" class="screen active items-center justify-center p-6">
+        <div class="glass p-10 w-full max-w-sm text-center">
+            <h1 class="text-6xl font-black mb-2 text-sky-500 italic">رَفوف</h1>
+            <p class="opacity-60 mb-10 text-[10px] font-bold uppercase tracking-widest">إدارة المحتوى الذكية</p>
+            <div class="space-y-4">
+                <input id="in-name" type="text" placeholder="الاسم" class="w-full p-4 rounded-2xl glass font-bold text-center">
+                <input id="in-phone" type="text" placeholder="رقم الهاتف / كود الأدمن" class="w-full p-4 rounded-2xl glass font-bold text-center">
+                <button onclick="login()" class="w-full bg-sky-500 py-4 rounded-2xl font-black text-white shadow-xl">دخول</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- الرئيسية -->
+    <section id="scr-main" class="screen pt-10">
+        <header class="p-6 flex justify-between items-center">
+            <div>
+                <h2 class="text-4xl font-black italic">المكتبة</h2>
+                <div class="flex gap-2 mt-2">
+                    <button onclick="setTheme('light')" class="w-5 h-5 rounded-full bg-amber-400 border border-white"></button>
+                    <button onclick="setTheme('dark')" class="w-5 h-5 rounded-full bg-slate-900 border border-white"></button>
+                </div>
+            </div>
+            <button onclick="openAdd()" class="w-12 h-12 glass flex items-center justify-center rounded-2xl text-sky-500">
+                <i data-lucide="plus"></i>
+            </button>
+        </header>
+
+        <div id="grid-scroll" class="overflow-y-auto px-6 pb-32 pt-2 flex-grow">
+            <!-- الكتب المشهورة (كتابين في الصف) -->
+            <h3 class="text-[10px] font-black opacity-30 mb-4 uppercase tracking-widest flex items-center gap-2">
+                <i data-lucide="award" class="w-3 h-3 text-amber-500"></i> الأكثر شهرة
+            </h3>
+            <div id="popular-grid" class="popular-grid mb-10"></div>
+            
+            <h3 class="text-[10px] font-black opacity-30 mb-4 uppercase tracking-widest">آخر الإضافات</h3>
+            <div id="books-grid" class="space-y-6"></div>
+        </div>
+    </section>
+
+    <!-- لوحة الإدارة (بدون خيار المستخدمين) -->
+    <section id="scr-admin" class="screen p-6 pt-20 overflow-y-auto pb-32">
+        <h2 class="text-4xl font-black text-red-500 italic mb-10 flex items-center gap-3">
+            <i data-lucide="settings"></i> لوحة الإدارة
+        </h2>
+        
+        <div class="space-y-6">
+            <!-- التحكم بالإعلانات -->
+            <div class="glass p-6 border-sky-500/20">
+                <h3 class="text-xs font-black mb-4 opacity-50 flex items-center gap-2">
+                    <i data-lucide="megaphone" class="w-4 h-4"></i> شريط الإعلانات العام
+                </h3>
+                <input id="adm-ann-input" type="text" placeholder="اكتب نص الإعلان هنا..." class="w-full p-4 rounded-xl glass mb-3 text-xs">
+                <div class="flex gap-2">
+                    <button onclick="updateAnnouncement()" class="flex-grow bg-sky-500 text-white font-black py-3 rounded-xl text-xs">نشر الإعلان</button>
+                    <button onclick="hideAnnouncement()" class="bg-red-500/20 text-red-500 px-4 rounded-xl text-xs flex items-center justify-center">
+                        <i data-lucide="eye-off" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- إدارة الكتب والمحتوى -->
+            <div class="glass p-6">
+                <h3 class="text-xs font-black mb-4 opacity-50 flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-4 h-4"></i> التحكم في المحتوى (الحذف)
+                </h3>
+                <div id="adm-books-list" class="space-y-3 max-h-80 overflow-y-auto pr-2"></div>
+            </div>
+            
+            <p class="text-[9px] text-center opacity-30 font-bold uppercase tracking-widest">نظام حماية المحتوى مفعل</p>
+        </div>
+    </section>
+
+    <!-- الرسائل -->
+    <section id="scr-chats" class="screen p-6 pt-20">
+        <h2 class="text-4xl font-black mb-10 italic">المحادثات</h2>
+        <div id="chats-list" class="space-y-4 overflow-y-auto pb-24"></div>
+    </section>
+
+    <!-- الملاحة -->
+    <nav class="nav-bar glass shadow-2xl" id="app-nav" style="display:none">
+        <div onclick="nav('scr-main')" id="n-main" class="flex flex-col items-center gap-1 text-sky-500">
+            <i data-lucide="home"></i>
+            <span class="text-[8px] font-bold">المكتبة</span>
+        </div>
+        <div onclick="nav('scr-chats')" id="n-chats" class="flex flex-col items-center gap-1 opacity-30">
+            <i data-lucide="message-square"></i>
+            <span class="text-[8px] font-bold">الرسائل</span>
+        </div>
+        <div id="n-admin" onclick="nav('scr-admin')" class="hidden flex flex-col items-center gap-1 opacity-30 text-red-500">
+            <i data-lucide="lock"></i>
+            <span class="text-[8px] font-bold">الإدارة</span>
+        </div>
+        <div onclick="logout()" class="flex flex-col items-center gap-1 opacity-20">
+            <i data-lucide="log-out"></i>
+        </div>
+    </nav>
+
+    <!-- مودال الإضافة -->
+    <div id="mod-global" class="fixed inset-0 bg-black/90 hidden z-[1000] items-center justify-center p-4 backdrop-blur-xl">
+        <div class="glass p-8 w-full max-w-md relative animate-in fade-in zoom-in duration-300" id="mod-content">
+            <button onclick="closeMod()" class="absolute top-5 right-5 opacity-40"><i data-lucide="x"></i></button>
+            <h3 class="text-2xl font-black mb-8 text-sky-500 italic">إضافة كتاب جديد</h3>
+            
+            <div class="space-y-4">
+                <input id="new-t" type="text" placeholder="عنوان الكتاب" class="w-full p-4 rounded-xl glass font-bold text-sm">
+                <input id="new-c" type="text" placeholder="رابط صورة الغلاف" class="w-full p-4 rounded-xl glass text-sm">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <select id="new-status" class="w-full p-4 rounded-xl glass text-xs font-bold appearance-none">
+                        <option value="ممتاز">حالة: ممتاز</option>
+                        <option value="جيد جداً">حالة: جيد جداً</option>
+                        <option value="مقبول">حالة: مقبول</option>
+                    </select>
+                    <select id="new-cat" class="w-full p-4 rounded-xl glass text-xs font-bold appearance-none">
+                        <option value="رواية">فئة: رواية</option>
+                        <option value="تعليمي">فئة: تعليمي</option>
+                        <option value="تطوير">فئة: تطوير ذات</option>
+                        <option value="ديني">فئة: ديني</option>
+                        <option value="أخرى">فئة: أخرى</option>
+                    </select>
+                </div>
+
+                <textarea id="new-desc" placeholder="وصف قصير عن الكتاب..." class="w-full p-4 rounded-xl glass text-xs h-28"></textarea>
+                
+                <button onclick="saveNew()" class="w-full bg-sky-500 py-4 rounded-2xl font-black text-white shadow-xl shadow-sky-500/20">نشر الآن</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, get, remove, update, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = { databaseURL: "https://coffee-spark-ai-barista-370d0-default-rtdb.firebaseio.com" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        lucide.createIcons();
+        let user = JSON.parse(localStorage.getItem('rafouf_admin_user'));
+        const ADMIN_CODE = "admin99";
+
+        window.setTheme = (mode) => {
+            document.body.className = mode + '-mode';
+            localStorage.setItem('rafouf_admin_theme', mode);
+        };
+        setTheme(localStorage.getItem('rafouf_admin_theme') || 'dark');
+
+        window.nav = (id) => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id !== 'scr-login'){
+                document.getElementById('app-nav').style.display = 'flex';
+                document.getElementById('n-admin').classList.toggle('hidden', !user.isAdmin);
+                document.querySelectorAll('.nav-bar > div').forEach(b => b.classList.add('opacity-30'));
+                document.getElementById('n-' + id.split('-')[1]).classList.remove('opacity-30');
+            }
+        };
+
+        window.login = async () => {
+            const n = document.getElementById('in-name').value;
+            const p = document.getElementById('in-phone').value;
+            if(!n || !p) return;
+            user = { name: n, phone: p, isAdmin: p === ADMIN_CODE };
+            localStorage.setItem('rafouf_admin_user', JSON.stringify(user));
+            await update(ref(db, `users/${p}`), { name: n, phone: p, last: Date.now() });
+            start();
+        };
+
+        function start() {
+            nav('scr-main');
+            syncData();
+        }
+
+        function syncData() {
+            // مزامنة الإعلان
+            onValue(ref(db, 'system/announcement'), (snap) => {
+                const bar = document.getElementById('system-announcement');
+                const text = document.getElementById('ann-text');
+                if(snap.exists() && snap.val().visible) {
+                    bar.classList.replace('hidden', 'flex');
+                    text.innerText = snap.val().msg;
+                } else bar.classList.replace('flex', 'hidden');
+            });
+
+            // مزامنة الكتب
+            onValue(ref(db, 'content'), (snap) => {
+                const grid = document.getElementById('books-grid');
+                const popGrid = document.getElementById('popular-grid');
+                const admList = document.getElementById('adm-books-list');
+                
+                grid.innerHTML = ''; popGrid.innerHTML = '';
+                if(user.isAdmin) admList.innerHTML = '';
+
+                if(snap.exists()){
+                    const items = Object.entries(snap.val()).reverse();
+                    
+                    // الكتب المشهورة (2 في الصف)
+                    const popular = [...items].sort((a,b) => (b[1].likes || 0) - (a[1].likes || 0)).slice(0, 4);
+                    popular.forEach(([id, item]) => {
+                        popGrid.innerHTML += `
+                            <div class="glass p-3 relative flex flex-col items-center">
+                                <img src="${item.cover}" class="w-full aspect-[3/4] object-cover rounded-xl mb-3 shadow-lg">
+                                <h4 class="text-[10px] font-black truncate w-full text-center px-1">${item.title}</h4>
+                                <div class="mt-2 flex items-center gap-1 text-[9px] opacity-40">
+                                    <i data-lucide="heart" class="w-3 h-3 fill-red-500 text-red-500"></i> ${item.likes || 0}
+                                </div>
+                            </div>`;
+                    });
+
+                    // المستجدات
+                    items.forEach(([id, item]) => {
+                        const hasLiked = item.likedBy && item.likedBy[user.phone];
+                        grid.innerHTML += `
+                            <div class="glass p-5 relative border-white/5">
+                                <div class="flex gap-4">
+                                    <div class="relative min-w-[90px]">
+                                        <img src="${item.cover}" class="w-24 h-36 object-cover rounded-2xl shadow-2xl">
+                                        <span class="absolute -top-2 -right-2 bg-sky-500 text-white text-[8px] font-black px-2 py-1 rounded-lg">${item.category || 'عام'}</span>
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h3 class="font-black text-xl mb-1">${item.title}</h3>
+                                        <p class="text-sky-500 text-[10px] font-bold mb-2">@${item.ownerName}</p>
+                                        <p class="text-[10px] opacity-50 line-clamp-2 italic mb-4">${item.description || 'لا يوجد وصف.'}</p>
+                                        <div class="flex gap-4">
+                                            <button onclick="likeDirect('${id}')" class="flex items-center gap-2 text-[11px] ${hasLiked ? 'text-red-500 font-bold' : 'opacity-40'}">
+                                                <i data-lucide="heart" class="w-4 h-4 ${hasLiked ? 'fill-red-500' : ''}"></i> ${item.likes || 0}
+                                            </button>
+                                            <span class="text-[11px] opacity-40 flex items-center gap-1"><i data-lucide="shield" class="w-4 h-4"></i> ${item.status}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="startChat('${item.ownerId}', '${item.ownerName}')" class="w-full bg-sky-500 text-white py-3 rounded-xl font-black text-xs mt-5">طلب مقايضة الكتاب</button>
+                                ${user.isAdmin ? `<button onclick="delBook('${id}')" class="absolute top-2 left-2 opacity-20 text-red-500"><i data-lucide="trash"></i></button>` : ''}
+                            </div>`;
+                        
+                        if(user.isAdmin) {
+                            admList.innerHTML += `
+                                <div class="bg-black/20 p-3 rounded-xl flex justify-between items-center text-xs border border-white/5">
+                                    <div class="flex items-center gap-3">
+                                        <img src="${item.cover}" class="w-8 h-10 object-cover rounded-md">
+                                        <span>${item.title}</span>
+                                    </div>
+                                    <button onclick="delBook('${id}')" class="text-red-500 font-black"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>`;
+                        }
+                    });
+                    lucide.createIcons();
+                }
+            });
+        }
+
+        window.likeDirect = async (id) => {
+            const bRef = ref(db, `content/${id}`);
+            const snap = await get(bRef);
+            const b = snap.val();
+            if(b.likedBy && b.likedBy[user.phone]) return;
+            update(bRef, { likes: increment(1), [`likedBy/${user.phone}`]: true });
+        };
+
+        window.updateAnnouncement = () => {
+            const msg = document.getElementById('adm-ann-input').value;
+            if(msg) set(ref(db, 'system/announcement'), { msg, visible: true });
+        };
+
+        window.hideAnnouncement = () => update(ref(db, 'system/announcement'), { visible: false });
+        window.openAdd = () => document.getElementById('mod-global').classList.replace('hidden', 'flex');
+        window.closeMod = () => document.getElementById('mod-global').classList.replace('flex','hidden');
+
+        window.saveNew = () => {
+            const t = document.getElementById('new-t').value, c = document.getElementById('new-c').value;
+            const st = document.getElementById('new-status').value, cat = document.getElementById('new-cat').value;
+            const desc = document.getElementById('new-desc').value;
+            if(t && c) {
+                push(ref(db, 'content'), { 
+                    title: t, cover: c, status: st, category: cat, description: desc,
+                    ownerId: user.phone, ownerName: user.name, likes: 0, time: Date.now() 
+                });
+                closeMod();
+            }
+        };
+
+        window.delBook = (id) => { if(confirm("هل أنت متأكد من حذف هذا الكتاب نهائياً؟")) remove(ref(db, `content/${id}`)); };
+        window.logout = () => { localStorage.clear(); location.reload(); };
+
+        if(user) start();
+      
