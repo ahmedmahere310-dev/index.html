@@ -12,7 +12,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
-          // !!! اذهب إلى موقع EmailJS -> Account -> API Keys وانسخ الـ Public Key وضعه هنا !!!
+          // !!! ضع الـ Public Key الخاص بك هنا لكي يعمل الإرسال !!!
           emailjs.init("Ru84Q4SIEnQZjbfL4"); 
        })();
     </script>
@@ -276,7 +276,7 @@
 
         document.getElementById('checkout-btn').onclick = () => { if(cart.length) document.getElementById('shipping-modal').classList.remove('hidden'); };
 
-        // تعديل وظيفة حفظ الطلب لإرسال الإيميل الجديد
+        // وظيفة حفظ الطلب وإرسال الإشعار
         document.getElementById('save-shipping-btn').onclick = async () => {
             const sh = { 
                 name: document.getElementById('ship-fullname').value, 
@@ -285,30 +285,30 @@
             };
             if(!sh.name || !sh.phone || !sh.address) return showNotify("⚠️ بيانات ناقصة", "#f59e0b");
 
-            // بيانات الإيميل
             const templateParams = {
                 user_name: profile.name,
                 order_details: cart.map(i => `${i.qty}x ${i.name}`).join(' - '),
                 total_price: document.getElementById('cart-total').innerText,
                 shipping_info: `الهاتف: ${sh.phone} | العنوان: ${sh.address}`,
-                to_email: 'esa381622@gmail.com' // تم التحديث للإيميل المطلوب
+                to_email: 'esa381622@gmail.com' 
             };
 
             try {
-                // حفظ في Firebase
+                // 1. حفظ في Firebase
                 await push(ref(rdb, `${DB_ROOT}/orders`), { 
                     userName: profile.name, items: cart, total: document.getElementById('cart-total').innerText, 
                     shipping: sh, status: 'قيد الانتظار', timestamp: Date.now() 
                 });
 
-                // إرسال الإشعار عبر EmailJS بالبيانات المتاحة
-                emailjs.send('service_erih35c', 'template_sz7avjj', templateParams)
-                    .then(() => console.log('Notification Sent'), (err) => console.log('Email Error', err));
+                // 2. إرسال الإيميل التنبيهي
+                emailjs.send('service_7d06dp2', 'template_lqgeexy', templateParams)
+                    .then(() => console.log('Email Sent'), (err) => console.log('Email Failed', err));
 
                 cart = []; updateCartUI(); 
                 document.getElementById('shipping-modal').classList.add('hidden');
                 document.getElementById('cart-close').click(); 
                 showNotify("✅ تم الإرسال بنجاح وتنبيه الإدارة", "#10b981");
+
             } catch (error) { showNotify("❌ فشل في الطلب", "#ef4444"); }
         };
 
