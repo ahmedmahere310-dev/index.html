@@ -3,175 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Es Store | Shipping System</title>
+    <title>Es Store | Admin Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #fcfcfc; color: #000; overflow-x: hidden; }
+        :root { --primary: #000; }
+        body { font-family: 'Cairo', sans-serif; background: #fff; color: #000; overflow-x: hidden; }
         .logo-font { font-family: 'Playfair Display', serif; }
-        .hero-section {
-            background-image: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0.2)), 
-                              url('https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
-            background-size: cover; background-position: center; border-radius: 2rem;
-        }
-        .login-bg {
-            background-image: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
-                              url('https://images.pexels.com/photos/934070/pexels-photo-934070.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+
+        #login-screen {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                              url('https://images.pexels.com/photos/1884581/pexels-photo-1884581.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
             background-size: cover; background-position: center;
         }
-        .nav-link.active { color: #000; border-bottom: 2px solid #000; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #000; border-radius: 10px; }
-        .admin-stat-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); }
+
+        .hero-container {
+            display: flex; align-items: center; background: #f9f9f9;
+            border-radius: 3rem; overflow: hidden; margin-bottom: 5rem; min-height: 500px;
+        }
+        .hero-image {
+            width: 50%; height: 600px;
+            background-image: url('https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+            background-size: cover; background-position: center;
+        }
+        .hero-text { width: 50%; padding: 4rem; text-align: right; }
+
+        .admin-stat-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem; border-radius: 1.5rem;
+        }
+
+        .product-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .product-card:hover { transform: translateY(-10px); }
+        .image-container { overflow: hidden; border-radius: 2rem; background: #eee; aspect-ratio: 3/4; position: relative; }
+        .image-container img { transition: transform 1.2s ease; width: 100%; height: 100%; object-fit: cover; }
+
+        .nav-link { position: relative; font-weight: 700; transition: all 0.3s; color: #999; cursor: pointer; }
+        .nav-link.active { color: #000; }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -5px; right: 0; width: 100%; height: 2px; background: #000; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #000; border-radius: 10px; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 2px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
     </style>
 </head>
 <body>
 
     <!-- شاشة الدخول -->
-    <div id="login-screen" class="fixed inset-0 z-[300] flex items-center justify-center p-6 login-bg text-center">
-        <div class="max-w-md w-full">
-            <h1 class="logo-font text-[8rem] text-white leading-none mb-4 italic select-none">Es</h1>
-            <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl border-t-8 border-black">
-                <div id="step-1">
-                    <h2 class="text-xl font-black mb-6 italic text-zinc-800">Welcome to Es</h2>
-                    <input type="text" id="user-name-input" placeholder="اسم المستخدم" class="w-full px-6 py-4 rounded-xl bg-gray-100 mb-4 text-center font-bold outline-none focus:ring-2 ring-black">
-                    <button id="next-btn" class="w-full bg-black text-white py-4 rounded-xl font-black tracking-widest uppercase text-sm">Next</button>
+    <div id="login-screen" class="fixed inset-0 z-[1000] flex items-center justify-center p-6 text-center transition-opacity duration-1000">
+        <div class="max-w-md w-full space-y-8 bg-white/10 backdrop-blur-md p-10 rounded-[3rem] border border-white/20">
+            <h1 class="logo-font text-7xl italic font-black text-white">Es</h1>
+            <div id="auth-box" class="space-y-4">
+                <div id="step-1" class="space-y-4">
+                    <input type="text" id="user-name-input" placeholder="اسم المستخدم" class="w-full p-5 rounded-2xl bg-white/10 text-white text-center font-bold outline-none border border-white/10 focus:border-white transition-all">
+                    <button id="next-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest">متابعة</button>
                 </div>
-                <div id="step-2" class="hidden">
-                    <h2 id="auth-title" class="text-xl font-black mb-6">Security Check</h2>
-                    <input type="password" id="user-pass-input" placeholder="••••••••" class="w-full px-6 py-4 rounded-xl bg-gray-100 mb-4 text-center font-bold outline-none focus:ring-2 ring-black">
-                    <button id="auth-final-btn" class="w-full bg-black text-white py-4 rounded-xl font-black tracking-widest uppercase text-sm">Verify</button>
+                <div id="step-2" class="hidden space-y-4">
+                    <input type="password" id="user-pass-input" placeholder="كلمة المرور" class="w-full p-5 rounded-2xl bg-white/10 text-white text-center font-bold outline-none border border-white/10 focus:border-white transition-all">
+                    <button id="auth-final-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest">دخول</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- تطبيق الأدمن والمستخدم -->
     <div id="main-app" class="hidden min-h-screen flex flex-col">
-        
-        <header class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md border-b">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex justify-between items-center">
-                <div class="flex items-center gap-6 sm:gap-10">
-                    <span class="logo-font text-3xl sm:text-4xl font-black italic">Es</span>
-                    <nav class="hidden sm:flex gap-6">
-                        <span onclick="showPage('home')" id="link-home" class="nav-link active cursor-pointer font-black text-xs uppercase tracking-widest">Shop</span>
-                        <span onclick="showPage('orders')" id="link-orders" class="nav-link cursor-pointer font-black text-xs uppercase tracking-widest">My Orders</span>
+        <!-- الهيدر -->
+        <header class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100">
+            <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+                <div class="flex items-center gap-10">
+                    <span class="logo-font text-4xl font-black italic cursor-pointer" onclick="location.reload()">Es</span>
+                    <nav class="hidden md:flex gap-6">
+                        <span onclick="showPage('home')" id="link-home" class="nav-link active text-[10px] uppercase tracking-widest">المتجر</span>
+                        <span onclick="showPage('orders')" id="link-orders" class="nav-link text-[10px] uppercase tracking-widest">طلباتي</span>
                     </nav>
                 </div>
-                
-                <div class="flex items-center gap-3">
-                    <button id="admin-toggle-btn" class="hidden bg-red-600 hover:bg-black text-white px-4 py-2 rounded-full font-black text-[9px] uppercase tracking-widest shadow-lg transition-all">
-                        Control Center
+                <div class="flex items-center gap-4">
+                    <button id="admin-toggle-btn" class="hidden bg-black text-white px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-transform">لوحة الإدارة</button>
+                    <button id="cart-trigger" class="relative p-2.5 bg-gray-100 rounded-full hover:bg-black group transition-all">
+                        <svg class="w-5 h-5 group-hover:stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2"/></svg>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
                     </button>
-
-                    <button id="cart-trigger" class="relative p-3 bg-black text-white rounded-full transition-transform hover:scale-110">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
-                    </button>
-                    
-                    <button id="logout-btn" class="p-2 text-gray-300 hover:text-black">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                    <button id="logout-btn" class="p-2 text-gray-300 hover:text-black transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2"/></svg>
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- لوحة التحكم الأدمن -->
-        <div id="admin-panel" class="hidden bg-zinc-950 text-white border-b-8 border-black shadow-2xl">
-            <div class="max-w-7xl mx-auto px-6 py-12">
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10 text-center">
-                    <div class="admin-stat-card p-6 rounded-2xl">
-                        <p class="text-[9px] text-zinc-500 font-bold uppercase tracking-[0.2em] mb-1">Total Items</p>
-                        <h4 id="stat-products" class="text-3xl font-black italic logo-font">0</h4>
+        <!-- لوحة الإدارة الاحترافية -->
+        <div id="admin-panel" class="hidden bg-[#0a0a0a] text-white p-8 border-b-8 border-black shadow-2xl overflow-hidden">
+            <div class="max-w-7xl mx-auto space-y-10">
+                <!-- الإحصائيات -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="admin-stat-card">
+                        <p class="text-[9px] text-zinc-500 uppercase tracking-widest mb-1">إجمالي المبيعات</p>
+                        <h4 id="stat-total-sales" class="text-2xl font-black italic">0 EGP</h4>
                     </div>
-                    <div class="admin-stat-card p-6 rounded-2xl">
-                        <p class="text-[9px] text-zinc-500 font-bold uppercase tracking-[0.2em] mb-1">Live Orders</p>
-                        <h4 id="stat-orders" class="text-3xl font-black italic logo-font">0</h4>
+                    <div class="admin-stat-card">
+                        <p class="text-[9px] text-zinc-500 uppercase tracking-widest mb-1">عدد الطلبات</p>
+                        <h4 id="stat-orders-count" class="text-2xl font-black italic">0</h4>
                     </div>
-                    <div class="admin-stat-card p-6 rounded-2xl">
-                        <p class="text-[9px] text-zinc-500 font-bold uppercase tracking-[0.2em] mb-1">Expected Revenue</p>
-                        <h4 id="stat-revenue" class="text-3xl font-black italic logo-font">0</h4>
+                    <div class="admin-stat-card">
+                        <p class="text-[9px] text-zinc-500 uppercase tracking-widest mb-1">المنتجات</p>
+                        <h4 id="stat-products-count" class="text-2xl font-black italic">0</h4>
                     </div>
-                    <div class="admin-stat-card p-6 rounded-2xl">
-                        <p class="text-[9px] text-zinc-500 font-bold uppercase tracking-[0.2em] mb-1">Status</p>
-                        <h4 class="text-xs font-black text-green-500 uppercase">Secured</h4>
+                    <div class="admin-stat-card border-blue-500/30">
+                        <p class="text-[9px] text-blue-400 uppercase tracking-widest mb-1">المستخدمين</p>
+                        <h4 id="stat-users-count" class="text-2xl font-black italic">0</h4>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div class="lg:col-span-4 bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-800">
-                        <h3 class="text-[10px] font-black uppercase text-zinc-500 mb-6 tracking-widest">Inventory Management</h3>
-                        <div class="space-y-4">
-                            <input type="text" id="p-name" placeholder="Product Name" class="w-full bg-black/50 border border-zinc-800 p-4 rounded-xl outline-none text-sm font-bold">
-                            <input type="number" id="p-price" placeholder="Price (EGP)" class="w-full bg-black/50 border border-zinc-800 p-4 rounded-xl outline-none text-sm font-bold">
-                            <input type="text" id="p-image" placeholder="Image URL" class="w-full bg-black/50 border border-zinc-800 p-4 rounded-xl outline-none text-[10px] text-zinc-400">
-                            <button id="add-product-btn" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase text-xs">Add Product</button>
-                        </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    <!-- نموذج إضافة منتج -->
+                    <div class="lg:col-span-4 bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-2 italic">إضافة منتج جديد</h3>
+                        <input type="text" id="p-name" placeholder="اسم المنتج" class="w-full bg-black p-4 rounded-xl text-sm outline-none border border-zinc-800 focus:border-white">
+                        <input type="number" id="p-price" placeholder="السعر" class="w-full bg-black p-4 rounded-xl text-sm outline-none border border-zinc-800 focus:border-white">
+                        <input type="text" id="p-image" placeholder="رابط الصورة المباشر" class="w-full bg-black p-4 rounded-xl text-xs outline-none border border-zinc-800 focus:border-white text-zinc-500">
+                        <select id="p-category" class="w-full bg-black p-4 rounded-xl text-xs outline-none border border-zinc-800 focus:border-white">
+                            <option value="clothing">ملابس</option>
+                            <option value="accessories">إكسسوارات</option>
+                            <option value="shoes">أحذية</option>
+                        </select>
+                        <button id="add-product-btn" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase text-[10px] tracking-widest hover:invert transition-all">نشر الآن</button>
                     </div>
-                    <div class="lg:col-span-8 bg-zinc-900/50 p-8 rounded-[2rem] border border-zinc-800 h-[500px] flex flex-col">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-[10px] font-black uppercase text-zinc-500 tracking-widest">Customer Requests (Detailed)</h3>
-                            <button onclick="window.clearAllOrders()" class="text-[9px] font-bold text-red-500 uppercase">Clear All</button>
+
+                    <!-- إدارة الطلبات والبحث -->
+                    <div class="lg:col-span-8 space-y-4">
+                        <div class="flex flex-col md:flex-row justify-between items-end gap-4 mb-2">
+                            <div class="w-full">
+                                <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-3 italic">إدارة الطلبات</h3>
+                                <input type="text" id="order-search" placeholder="بحث باسم العميل أو المنتج..." class="w-full bg-white/5 p-4 rounded-xl text-xs outline-none border border-white/5">
+                            </div>
+                            <button onclick="window.clearAllOrders()" class="bg-red-500/10 text-red-500 px-6 py-4 rounded-xl text-[9px] font-black uppercase whitespace-nowrap hover:bg-red-500 hover:text-white transition-all">مسح السجل</button>
                         </div>
-                        <div id="all-orders-admin" class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-3"></div>
+                        <div id="all-orders-admin" class="grid grid-cols-1 gap-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                            <!-- الطلبات تظهر هنا -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- الرئيسية -->
         <main id="page-home" class="flex-1 max-w-7xl mx-auto px-6 py-10 w-full">
-            <div class="hero-section p-10 sm:p-20 mb-12 min-h-[350px] flex flex-col justify-end shadow-2xl overflow-hidden">
-                <p class="text-[10px] font-black uppercase tracking-[0.5em] mb-4 text-black/60">New Collection</p>
-                <h2 class="text-6xl sm:text-8xl font-black italic logo-font text-black leading-none mb-6">Es House</h2>
-            </div>
-            <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-8"></div>
+            <section class="hero-container border border-gray-100 shadow-sm">
+                <div class="hero-image"></div>
+                <div class="hero-text">
+                    <p class="text-[10px] font-black uppercase tracking-[1em] text-gray-400 mb-4 italic">Es Exclusive</p>
+                    <h2 class="text-7xl md:text-8xl font-black italic logo-font leading-none mb-6">Master<br>Piece</h2>
+                    <p class="text-gray-400 max-w-sm text-xs leading-relaxed mb-8">قطع تم اختيارها بعناية فائقة لتناسب ذوقك الرفيع. الجودة هي بصمتنا الدائمة.</p>
+                    <button onclick="window.scrollTo({top: 800, behavior: 'smooth'})" class="bg-black text-white px-8 py-4 rounded-full font-black text-[9px] uppercase tracking-widest shadow-xl">اكتشف الآن</button>
+                </div>
+            </section>
+            
+            <div id="products-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-12"></div>
         </main>
 
-        <main id="page-orders" class="hidden flex-1 max-w-4xl mx-auto px-6 py-12 w-full">
-            <h2 class="text-4xl font-black italic logo-font mb-10 text-center uppercase">History</h2>
+        <!-- طلباتي -->
+        <main id="page-orders" class="hidden flex-1 max-w-4xl mx-auto px-6 py-16 w-full">
+            <h2 class="text-5xl font-black italic logo-font mb-12 text-center">My History</h2>
             <div id="my-orders-list" class="space-y-4"></div>
         </main>
+
+        <footer class="py-16 text-center opacity-10">
+            <span class="logo-font text-2xl italic">Es Store 2025</span>
+        </footer>
     </div>
 
-    <!-- مودال بيانات الشحن -->
-    <div id="shipping-modal" class="fixed inset-0 z-[400] bg-black/90 hidden flex items-center justify-center p-6">
-        <div class="bg-white max-w-lg w-full rounded-[2.5rem] p-10 relative">
-            <h2 class="text-3xl font-black italic logo-font mb-2">Shipping Details</h2>
-            <p class="text-zinc-400 text-xs font-bold mb-8 uppercase tracking-widest">نحتاج لهذه البيانات لتوصيل طلبك</p>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="text-[10px] font-black uppercase mb-1 block text-zinc-400 tracking-widest">الاسم بالكامل</label>
-                    <input type="text" id="ship-fullname" class="w-full bg-zinc-50 border p-4 rounded-xl font-bold outline-none focus:ring-2 ring-black">
-                </div>
-                <div>
-                    <label class="text-[10px] font-black uppercase mb-1 block text-zinc-400 tracking-widest">رقم الهاتف</label>
-                    <input type="tel" id="ship-phone" class="w-full bg-zinc-50 border p-4 rounded-xl font-bold outline-none focus:ring-2 ring-black">
-                </div>
-                <div>
-                    <label class="text-[10px] font-black uppercase mb-1 block text-zinc-400 tracking-widest">العنوان التفصيلي</label>
-                    <textarea id="ship-address" class="w-full bg-zinc-50 border p-4 rounded-xl font-bold outline-none focus:ring-2 ring-black h-24 resize-none"></textarea>
-                </div>
-                <button id="save-shipping-btn" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl">Confirm & Order</button>
-                <button onclick="document.getElementById('shipping-modal').classList.add('hidden')" class="w-full text-zinc-400 text-xs font-bold mt-2 hover:text-black">Cancel</button>
+    <!-- مودال الشحن -->
+    <div id="shipping-modal" class="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-md hidden flex items-center justify-center p-6">
+        <div class="bg-white max-w-md w-full rounded-[3rem] p-10 shadow-2xl">
+            <h2 class="text-3xl font-black italic logo-font mb-6">Shipping Details</h2>
+            <div class="space-y-3">
+                <input type="text" id="ship-fullname" placeholder="الاسم" class="w-full p-4 rounded-xl bg-gray-50 text-sm font-bold outline-none border focus:border-black">
+                <input type="tel" id="ship-phone" placeholder="الموبايل" class="w-full p-4 rounded-xl bg-gray-50 text-sm font-bold outline-none border focus:border-black">
+                <textarea id="ship-address" placeholder="العنوان بالتفصيل" class="w-full p-4 rounded-xl bg-gray-50 text-sm font-bold outline-none h-28 resize-none border focus:border-black"></textarea>
+                <button id="save-shipping-btn" class="w-full bg-black text-white py-5 rounded-xl font-black uppercase tracking-widest mt-2">تأكيد الطلب</button>
             </div>
         </div>
     </div>
 
     <!-- درج السلة -->
-    <div id="cart-drawer" class="fixed inset-0 z-[200] bg-black/80 hidden">
-        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-sm bg-white p-10 flex flex-col transform translate-x-full transition-transform duration-500">
+    <div id="cart-drawer" class="fixed inset-0 z-[1100] bg-black/20 hidden">
+        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-xs bg-white p-8 flex flex-col transform translate-x-full transition-transform duration-500 ease-in-out shadow-2xl">
             <div class="flex justify-between items-center mb-10">
                 <h2 class="text-3xl font-black italic logo-font">Bag</h2>
-                <button id="cart-close" class="text-4xl">&times;</button>
+                <button id="cart-close" class="text-3xl">&times;</button>
             </div>
-            <div id="cart-items" class="flex-1 overflow-y-auto space-y-8 custom-scrollbar"></div>
-            <div class="pt-8 border-t mt-8">
-                <div class="flex justify-between font-black text-2xl italic mb-8">
-                    <span class="text-sm font-bold uppercase text-zinc-400 tracking-widest">Total</span>
+            <div id="cart-items" class="flex-1 overflow-y-auto space-y-6 custom-scrollbar pr-2"></div>
+            <div class="pt-8 border-t border-gray-100 mt-6">
+                <div class="flex justify-between font-black text-xl italic mb-6">
+                    <span class="text-[9px] text-gray-400 uppercase tracking-widest mt-1">Total</span>
                     <span id="cart-total">0 EGP</span>
                 </div>
-                <button id="checkout-btn" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95">Checkout Now</button>
+                <button id="checkout-btn" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest text-[10px]">إتمام الشراء</button>
             </div>
         </div>
     </div>
@@ -194,217 +222,207 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const rdb = getDatabase(app);
-        const DB_ROOT = "es_v_final_shipping_v1";
+        const DB_ROOT = "es_v_admin_pro_final";
 
-        let profile = null; let cart = [];
+        let profile = null; let cart = []; let allOrders = [];
 
-        // إدارة الدخول
-        document.getElementById('next-btn').onclick = async () => {
-            const name = document.getElementById('user-name-input').value.trim();
-            if(!name) return;
-            const snap = await get(ref(rdb, `${DB_ROOT}/users/${name}`));
-            if(snap.exists()) document.getElementById('auth-title').innerText = "Hello, " + name;
+        // Auth
+        document.getElementById('next-btn').onclick = () => {
+            if(!document.getElementById('user-name-input').value) return;
             document.getElementById('step-1').classList.add('hidden');
             document.getElementById('step-2').classList.remove('hidden');
         };
 
         document.getElementById('auth-final-btn').onclick = async () => {
-            const name = document.getElementById('user-name-input').value.trim();
-            const pass = document.getElementById('user-pass-input').value.trim();
-            const snap = await get(ref(rdb, `${DB_ROOT}/users/${name}`));
-            
-            if(snap.exists()) {
-                if(snap.val().password !== pass) { alert("Invalid Password"); return; }
-            } else {
+            const n = document.getElementById('user-name-input').value.trim();
+            const p = document.getElementById('user-pass-input').value.trim();
+            const snap = await get(ref(rdb, `${DB_ROOT}/users/${n}`));
+            if(!snap.exists()) {
                 await signInAnonymously(auth);
-                await set(ref(rdb, `${DB_ROOT}/users/${name}`), { name, password: pass, role: "user" });
-            }
-            localStorage.setItem('es_user_active_id', name);
+                await set(ref(rdb, `${DB_ROOT}/users/${n}`), { name: n, password: p, role: (n.toLowerCase()==='admin'?'admin':'user') });
+            } else if(snap.val().password !== p) { alert("Wrong Password"); return; }
+            localStorage.setItem('es_pro_session_key', n);
             location.reload();
         };
 
         onAuthStateChanged(auth, (user) => {
-            const saved = localStorage.getItem('es_user_active_id');
+            const saved = localStorage.getItem('es_pro_session_key');
             if(saved) {
                 onValue(ref(rdb, `${DB_ROOT}/users/${saved}`), (snap) => {
                     profile = snap.val();
                     if(profile) {
-                        document.getElementById('login-screen').classList.add('hidden');
+                        document.getElementById('login-screen').classList.add('opacity-0');
+                        setTimeout(()=>document.getElementById('login-screen').classList.add('hidden'), 1000);
                         document.getElementById('main-app').classList.remove('hidden');
-                        
-                        if(profile.role === 'admin') {
-                            document.getElementById('admin-toggle-btn').classList.remove('hidden');
-                            loadAdminData();
-                        }
-                        loadStore(); loadMyOrders();
+                        if(profile.role === 'admin') document.getElementById('admin-toggle-btn').classList.remove('hidden');
+                        loadStore(); loadOrders(); loadStats();
                     }
                 });
             }
         });
 
-        // لوحة التحكم
-        document.getElementById('admin-toggle-btn').onclick = () => {
-            document.getElementById('admin-panel').classList.toggle('hidden');
-        };
-
+        // Store Logic
         function loadStore() {
             onValue(ref(rdb, `${DB_ROOT}/products`), (snap) => {
                 const grid = document.getElementById('products-grid'); grid.innerHTML = '';
-                const data = snap.val(); if(!data) return;
-                let c = 0;
-                Object.keys(data).forEach(id => {
-                    const p = data[id]; c++;
-                    grid.innerHTML += `
-                        <div class="group relative">
-                            <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-zinc-100 mb-4 relative shadow-sm border border-zinc-100">
-                                <img src="${p.image || 'https://images.pexels.com/photos/157675/fashion-men-s-individuality-black-and-white-157675.jpeg?auto=compress&cs=tinysrgb&w=800'}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                <button onclick="window.addToCart('${id}', '${p.name}', ${p.price})" class="absolute bottom-4 left-4 right-4 bg-white/95 py-3 rounded-2xl font-black text-[10px] uppercase opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all shadow-xl">Quick Buy</button>
-                                ${profile && profile.role === 'admin' ? `<button onclick="window.delP('${id}')" class="absolute top-4 right-4 bg-red-500 text-white w-6 h-6 rounded-full text-xs font-bold leading-none">×</button>` : ''}
-                            </div>
-                            <h4 class="font-black italic uppercase text-xs tracking-tighter truncate px-2">${p.name}</h4>
-                            <p class="text-zinc-400 font-bold text-[10px] px-2 italic">${p.price} EGP</p>
-                        </div>`;
-                });
-                if(profile && profile.role === 'admin') document.getElementById('stat-products').innerText = c;
-            });
-        }
-
-        // إحصائيات الأدمن والطلبات
-        function loadAdminData() {
-            onValue(ref(rdb, `${DB_ROOT}/orders`), (snap) => {
-                const container = document.getElementById('all-orders-admin'); container.innerHTML = '';
                 const data = snap.val(); 
-                if(!data) { document.getElementById('stat-orders').innerText = "0"; document.getElementById('stat-revenue').innerText = "0"; return; }
-
-                let rev = 0; let count = 0;
+                document.getElementById('stat-products-count').innerText = data ? Object.keys(data).length : 0;
+                if(!data) return;
                 Object.keys(data).reverse().forEach(id => {
-                    const o = data[id]; count++;
-                    rev += parseInt(o.total.replace(/\D/g,''));
-                    container.innerHTML += `
-                        <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <h4 class="font-black italic text-sm text-white">${o.userName}</h4>
-                                    <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">${new Date(o.timestamp).toLocaleString()}</p>
+                    const p = data[id];
+                    grid.innerHTML += `
+                        <div class="product-card group">
+                            <div class="image-container">
+                                <img src="${p.image || 'https://images.pexels.com/photos/157675/pexels-photo-157675.jpeg?auto=compress&cs=tinysrgb&w=800'}">
+                                <div class="absolute inset-x-0 bottom-3 px-3 translate-y-20 group-hover:translate-y-0 transition-all duration-500">
+                                    <button onclick="window.addToCart('${id}','${p.name}',${p.price})" class="w-full bg-black text-white py-3 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-2xl">أضف للحقيبة</button>
                                 </div>
-                                <span class="bg-white/10 px-4 py-1 rounded-full text-[10px] font-black italic uppercase tracking-widest">${o.total}</span>
+                                ${profile.role==='admin' ? `<button onclick="window.delP('${id}')" class="absolute top-3 right-3 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] font-bold">×</button>` : ''}
                             </div>
-                            <!-- تفاصيل الشحن للأدمن -->
-                            <div class="bg-black/40 p-4 rounded-xl mb-4 space-y-2 border border-zinc-800/50">
-                                <div class="flex gap-2"><span class="text-[9px] font-black text-red-500 uppercase w-12">Phone:</span><span class="text-[10px] font-bold text-zinc-300">${o.shipping.phone}</span></div>
-                                <div class="flex gap-2"><span class="text-[9px] font-black text-red-500 uppercase w-12">Address:</span><span class="text-[10px] font-bold text-zinc-300 leading-relaxed">${o.shipping.address}</span></div>
+                            <div class="mt-4 text-center">
+                                <h4 class="font-black italic uppercase text-[10px] tracking-tight mb-0.5">${p.name}</h4>
+                                <p class="text-gray-400 font-bold text-[9px]">${p.price} EGP</p>
                             </div>
-                            <div class="text-[9px] text-zinc-400 font-bold mb-4 uppercase tracking-widest border-l-2 border-red-500 pl-3">
-                                ${o.items.map(i => `${i.qty}x ${i.name}`).join(' | ')}
-                            </div>
-                            <button onclick="window.delO('${id}')" class="w-full bg-red-600/10 text-red-600 hover:bg-red-600 hover:text-white py-3 rounded-xl text-[10px] font-black uppercase transition-all tracking-widest">Mark as Delivered</button>
                         </div>`;
                 });
-                document.getElementById('stat-orders').innerText = count;
-                document.getElementById('stat-revenue').innerText = rev.toLocaleString() + " EGP";
             });
         }
 
-        function loadMyOrders() {
+        // Stats & Users
+        function loadStats() {
+            onValue(ref(rdb, `${DB_ROOT}/users`), (snap) => {
+                const data = snap.val();
+                document.getElementById('stat-users-count').innerText = data ? Object.keys(data).length : 0;
+            });
+        }
+
+        // Orders Management
+        function loadOrders() {
             onValue(ref(rdb, `${DB_ROOT}/orders`), (snap) => {
-                const list = document.getElementById('my-orders-list'); list.innerHTML = '';
-                const data = snap.val(); if(!data) return;
-                Object.values(data).filter(o => o.userName === profile.name).reverse().forEach(o => {
-                    list.innerHTML += `<div class="bg-white p-6 rounded-[2rem] border shadow-sm flex flex-col sm:flex-row justify-between items-center group">
-                        <div class="flex items-center gap-6">
-                            <div class="h-10 w-1 bg-black group-hover:bg-red-500 transition-colors"></div>
+                const my = document.getElementById('my-orders-list'); 
+                const adm = document.getElementById('all-orders-admin');
+                my.innerHTML = ''; adm.innerHTML = '';
+                const data = snap.val(); 
+                allOrders = data ? Object.entries(data).reverse() : [];
+                
+                let totalIncome = 0;
+                document.getElementById('stat-orders-count').innerText = allOrders.length;
+
+                allOrders.forEach(([id, o]) => {
+                    const priceNum = parseInt(o.total.replace(/\D/g, ''));
+                    totalIncome += priceNum;
+
+                    const itemHTML = `<div class="bg-white p-6 rounded-3xl border border-gray-100 flex justify-between items-center group shadow-sm">
+                        <div class="flex items-center gap-5">
+                            <div class="h-8 w-1 bg-black rounded-full"></div>
                             <div>
-                                <p class="text-[9px] text-zinc-400 font-black uppercase tracking-[0.3em] mb-1">Confirmed Purchase</p>
-                                <h4 class="font-black italic text-sm">${o.items.map(i=>`${i.qty}x ${i.name}`).join(' & ')}</h4>
+                                <p class="text-[8px] text-gray-300 font-black uppercase tracking-widest mb-0.5 italic">Order #..${id.slice(-4)}</p>
+                                <h4 class="font-black italic text-xs">${o.items.map(i=>`${i.qty}x ${i.name}`).join(' - ')}</h4>
                             </div>
                         </div>
-                        <div class="mt-4 sm:mt-0 font-black italic text-xl">${o.total}</div>
+                        <div class="font-black italic text-md">${o.total}</div>
                     </div>`;
+                    
+                    if(o.userName === profile.name) my.innerHTML += itemHTML;
+                    
+                    if(profile.role === 'admin') {
+                        renderAdminOrder(id, o, adm);
+                    }
                 });
+                document.getElementById('stat-total-sales').innerText = totalIncome + " EGP";
             });
         }
 
-        // إدارة السلة والكميات
-        window.addToCart = (id, n, p) => {
-            const exists = cart.find(i => i.id === id);
-            if(exists) exists.qty++;
-            else cart.push({id, name:n, price:p, qty:1});
-            syncUI();
+        function renderAdminOrder(id, o, container) {
+            container.innerHTML += `<div class="order-admin-card bg-white/5 p-5 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="bg-white text-black px-3 py-1 rounded-full text-[8px] font-black uppercase">${o.userName}</span>
+                    <span class="text-xs font-black italic text-green-400">${o.total}</span>
+                </div>
+                <div class="text-[9px] text-zinc-400 mb-3 leading-relaxed">
+                    <p class="font-bold text-zinc-200">📦 ${o.items.map(i=>`${i.qty} ${i.name}`).join(', ')}</p>
+                    <p class="mt-1">📍 ${o.shipping.address}</p>
+                    <p>📞 ${o.shipping.phone}</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="window.delO('${id}')" class="flex-1 bg-zinc-800 text-[8px] font-black uppercase py-2.5 rounded-lg hover:bg-green-600 transition-all">تم التوصيل</button>
+                    <button onclick="window.delO('${id}')" class="bg-red-900/20 text-red-500 p-2.5 rounded-lg hover:bg-red-500 hover:text-white transition-all">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-width="2"/></svg>
+                    </button>
+                </div>
+            </div>`;
+        }
+
+        // Search Orders
+        document.getElementById('order-search').oninput = (e) => {
+            const term = e.target.value.toLowerCase();
+            const adm = document.getElementById('all-orders-admin'); adm.innerHTML = '';
+            allOrders.forEach(([id, o]) => {
+                if(o.userName.toLowerCase().includes(term) || o.shipping.address.toLowerCase().includes(term) || o.items.some(i=>i.name.toLowerCase().includes(term))) {
+                    renderAdminOrder(id, o, adm);
+                }
+            });
         };
 
-        window.qtyChange = (idx, delta) => {
-            cart[idx].qty += delta;
-            if(cart[idx].qty < 1) cart.splice(idx, 1);
-            syncUI();
+        // UI Handlers
+        window.addToCart = (id,n,p) => {
+            const ex = cart.find(i=>i.id===id);
+            if(ex) ex.qty++; else cart.push({id,name:n,price:p,qty:1});
+            updateCartUI();
         };
 
-        function syncUI() {
+        function updateCartUI() {
             document.getElementById('cart-count').innerText = cart.length;
-            const items = document.getElementById('cart-items'); items.innerHTML = ''; let t = 0;
-            cart.forEach((item, idx) => {
-                t += (item.price * item.qty);
-                items.innerHTML += `
-                    <div class="flex justify-between items-center">
-                        <div class="text-right">
-                            <p class="font-black italic text-xs uppercase mb-1">${item.name}</p>
-                            <p class="text-[10px] text-zinc-400 font-bold italic">${item.price} EGP</p>
-                        </div>
-                        <div class="flex items-center gap-4 bg-zinc-50 px-3 py-1 rounded-full border">
-                            <button onclick="window.qtyChange(${idx}, -1)" class="font-black text-xl leading-none text-zinc-300">-</button>
-                            <span class="font-black text-sm italic">${item.qty}</span>
-                            <button onclick="window.qtyChange(${idx}, 1)" class="font-black text-xl leading-none text-zinc-300">+</button>
-                        </div>
-                    </div>`;
+            const list = document.getElementById('cart-items'); list.innerHTML = ''; let t = 0;
+            cart.forEach((i, idx) => {
+                t += (i.price * i.qty);
+                list.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
+                    <div><p class="font-black italic text-[10px] uppercase mb-0.5">${i.name}</p><p class="text-[9px] text-gray-400 font-bold italic">${i.price} EGP</p></div>
+                    <div class="flex items-center gap-3 bg-white px-3 py-1.5 rounded-full border">
+                        <button onclick="window.q(${idx},-1)" class="font-black text-gray-200 hover:text-black">-</button>
+                        <span class="font-black text-[10px] italic">${i.qty}</span>
+                        <button onclick="window.q(${idx},1)" class="font-black text-gray-200 hover:text-black">+</button>
+                    </div>
+                </div>`;
             });
             document.getElementById('cart-total').innerText = t + " EGP";
         }
 
-        // عملية إتمام الطلب (Checkout)
+        window.q = (idx, d) => { cart[idx].qty += d; if(cart[idx].qty<1) cart.splice(idx,1); updateCartUI(); };
+
         document.getElementById('checkout-btn').onclick = () => {
-            if(cart.length === 0) return;
-            
-            // تحقق من وجود بيانات محفوظة
-            const savedShipping = localStorage.getItem('es_shipping_data');
-            if(savedShipping) {
-                const data = JSON.parse(savedShipping);
-                document.getElementById('ship-fullname').value = data.name || "";
-                document.getElementById('ship-phone').value = data.phone || "";
-                document.getElementById('ship-address').value = data.address || "";
+            if(!cart.length) return;
+            const saved = localStorage.getItem('es_ship_pro_v3');
+            if(saved) {
+                const d = JSON.parse(saved);
+                document.getElementById('ship-fullname').value = d.name;
+                document.getElementById('ship-phone').value = d.phone;
+                document.getElementById('ship-address').value = d.address;
             }
-            
             document.getElementById('shipping-modal').classList.remove('hidden');
         };
 
         document.getElementById('save-shipping-btn').onclick = async () => {
-            const name = document.getElementById('ship-fullname').value.trim();
-            const phone = document.getElementById('ship-phone').value.trim();
-            const addr = document.getElementById('ship-address').value.trim();
-
-            if(!name || !phone || !addr) { alert("يرجى إكمال جميع البيانات للشحن"); return; }
-
-            const shippingData = { name, phone, address: addr };
-            localStorage.setItem('es_shipping_data', JSON.stringify(shippingData));
-
-            // إرسال الطلب
-            await push(ref(rdb, `${DB_ROOT}/orders`), {
-                userName: profile.name,
-                items: cart,
-                total: document.getElementById('cart-total').innerText,
-                shipping: shippingData,
-                timestamp: Date.now()
-            });
-
-            // مسح السلة وإغلاق المودالات
-            cart = []; syncUI();
-            document.getElementById('shipping-modal').classList.add('hidden');
-            document.getElementById('cart-close').click();
-            alert("تم إرسال طلبك بنجاح وسنتواصل معك للشحن!");
+            const sh = { name: document.getElementById('ship-fullname').value, phone: document.getElementById('ship-phone').value, address: document.getElementById('ship-address').value };
+            if(!sh.name || !sh.phone || !sh.address) return alert("يرجى إكمال البيانات");
+            localStorage.setItem('es_ship_pro_v3', JSON.stringify(sh));
+            await push(ref(rdb, `${DB_ROOT}/orders`), { userName: profile.name, items: cart, total: document.getElementById('cart-total').innerText, shipping: sh, timestamp: Date.now() });
+            cart = []; updateCartUI(); document.getElementById('shipping-modal').classList.add('hidden'); document.getElementById('cart-close').click(); alert("تم استلام طلبك!");
         };
 
-        // وظائف عامة
+        document.getElementById('add-product-btn').onclick = async () => {
+            const n = document.getElementById('p-name').value;
+            const p = Number(document.getElementById('p-price').value);
+            const i = document.getElementById('p-image').value;
+            const c = document.getElementById('p-category').value;
+            if(!n || !p) return alert("بيانات ناقصة");
+            await push(ref(rdb, `${DB_ROOT}/products`), { name: n, price: p, image: i, category: c, timestamp: Date.now() });
+            document.getElementById('p-name').value=''; document.getElementById('p-price').value=''; document.getElementById('p-image').value='';
+        };
+
         window.delP = (id) => remove(ref(rdb, `${DB_ROOT}/products/${id}`));
         window.delO = (id) => remove(ref(rdb, `${DB_ROOT}/orders/${id}`));
-        window.clearAllOrders = () => { if(confirm("Clear history?")) remove(ref(rdb, `${DB_ROOT}/orders`)); };
+        window.clearAllOrders = () => { if(confirm("مسح كافة سجلات الطلبات؟")) remove(ref(rdb, `${DB_ROOT}/orders`)); };
         
         window.showPage = (id) => {
             document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
@@ -412,15 +430,9 @@
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(`link-${id}`).classList.add('active');
         };
-
-        document.getElementById('cart-trigger').onclick = () => {
-            document.getElementById('cart-drawer').classList.remove('hidden');
-            setTimeout(() => document.getElementById('cart-inner').classList.remove('translate-x-full'), 10);
-        };
-        document.getElementById('cart-close').onclick = () => {
-            document.getElementById('cart-inner').classList.add('translate-x-full');
-            setTimeout(() => document.getElementById('cart-drawer').classList.add('hidden'), 500);
-        };
+        document.getElementById('admin-toggle-btn').onclick = () => document.getElementById('admin-panel').classList.toggle('hidden');
+        document.getElementById('cart-trigger').onclick = () => { document.getElementById('cart-drawer').classList.remove('hidden'); setTimeout(()=>document.getElementById('cart-inner').classList.remove('translate-x-full'),10); };
+        document.getElementById('cart-close').onclick = () => { document.getElementById('cart-inner').classList.add('translate-x-full'); setTimeout(()=>document.getElementById('cart-drawer').classList.add('hidden'),500); };
         document.getElementById('logout-btn').onclick = () => { localStorage.clear(); location.reload(); };
     </script>
 </body>
