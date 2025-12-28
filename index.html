@@ -12,7 +12,6 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
-          // !!! ضع الـ Public Key الخاص بك هنا لكي يعمل الإرسال !!!
           emailjs.init("Ru84Q4SIEnQZjbfL4"); 
        })();
     </script>
@@ -244,6 +243,25 @@
             } else {
                 update(ref(rdb, `${DB_ROOT}/orders/${id}`), { status: status });
                 showNotify(`✔️ تم التحديث إلى: ${status}`, "#10b981");
+
+                // الإضافة المطلوبة: التحويل للواتساب عند الضغط على "تم التوصيل"
+                if(status === 'تم التوصيل') {
+                    get(ref(rdb, `${DB_ROOT}/orders/${id}`)).then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const o = snapshot.val();
+                            const message = `أهلاً بك يا ${o.shipping.name} 🌸%0A%0A` +
+                                            `طلبك (${o.items.map(i => `${i.qty}x ${i.name}`).join(' - ')}) خرج من المخزن الآن 🚚%0A` +
+                                            `وهيوصلك الساعة [اكتب الساعة] في [اكتب المكان] ✅%0A%0A` +
+                                            `إجمالي الحساب: ${o.total}%0A` +
+                                            `شكراً لثقتك في Es Store! ✨`;
+                            
+                            let cleanPhone = o.shipping.phone.replace(/\D/g, '');
+                            if(!cleanPhone.startsWith('20') && cleanPhone.startsWith('01')) cleanPhone = '2' + cleanPhone;
+                            
+                            window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+                        }
+                    });
+                }
             }
         };
 
@@ -276,7 +294,6 @@
 
         document.getElementById('checkout-btn').onclick = () => { if(cart.length) document.getElementById('shipping-modal').classList.remove('hidden'); };
 
-        // وظيفة حفظ الطلب وإرسال الإشعار
         document.getElementById('save-shipping-btn').onclick = async () => {
             const sh = { 
                 name: document.getElementById('ship-fullname').value, 
@@ -294,13 +311,11 @@
             };
 
             try {
-                // 1. حفظ في Firebase
                 await push(ref(rdb, `${DB_ROOT}/orders`), { 
                     userName: profile.name, items: cart, total: document.getElementById('cart-total').innerText, 
                     shipping: sh, status: 'قيد الانتظار', timestamp: Date.now() 
                 });
 
-                // 2. إرسال الإيميل التنبيهي
                 emailjs.send('service_7d06dp2', 'template_lqgeexy', templateParams)
                     .then(() => console.log('Email Sent'), (err) => console.log('Email Failed', err));
 
