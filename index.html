@@ -3,61 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Es Store | Native Notifications</title>
+    <title>Es Store | Admin Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
     <style>
         :root { --primary: #000; }
         body { font-family: 'Cairo', sans-serif; background: #fff; color: #000; overflow-x: hidden; }
         .logo-font { font-family: 'Playfair Display', serif; }
 
-        /* شاشة الدخول */
         #login-screen {
             background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                               url('https://images.pexels.com/photos/1884581/pexels-photo-1884581.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
             background-size: cover; background-position: center;
         }
 
-        /* Hero Section */
         .hero-container {
             display: flex; align-items: center; background: #f9f9f9;
-            border-radius: 3rem; overflow: hidden; margin-bottom: 5rem; min-height: 500px;
+            border-radius: 3rem; overflow: hidden; margin-bottom: 5rem;
+            min-height: 500px; border: 1px solid #f1f1f1;
         }
+
         .hero-image {
             width: 50%; height: 600px;
             background-image: url('https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
             background-size: cover; background-position: center;
         }
+
         .hero-text { width: 50%; padding: 4rem; text-align: right; }
 
-        /* Toasts Container */
-        #notification-container {
-            position: fixed; top: 20px; left: 20px; z-index: 9999;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .toast {
-            background: #000; color: #fff; padding: 1rem 2rem; border-radius: 1.5rem;
-            font-size: 0.8rem; font-weight: bold; transform: translateX(-150%);
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        .toast.show { transform: translateX(0); }
+        .product-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .product-card:hover { transform: translateY(-10px); }
 
-        .product-card { transition: all 0.4s; }
-        .product-card:hover { transform: translateY(-8px); }
-        .image-container { overflow: hidden; border-radius: 2rem; background: #eee; aspect-ratio: 3/4; position: relative; }
-        .image-container img { transition: transform 1s; width: 100%; height: 100%; object-fit: cover; }
+        .image-container {
+            overflow: hidden; border-radius: 2rem; background: #eee;
+            aspect-ratio: 3/4; position: relative;
+        }
 
-        .nav-link { font-weight: 700; color: #999; cursor: pointer; position: relative; }
+        .image-container img { transition: transform 1.2s ease; width: 100%; height: 100%; object-fit: cover; }
+        .product-card:hover img { transform: scale(1.1); }
+
+        .nav-link { position: relative; font-weight: 700; transition: all 0.3s; color: #999; cursor: pointer; }
         .nav-link.active { color: #000; }
-        .nav-link.active::after { content: ''; position: absolute; bottom: -4px; right: 0; width: 100%; height: 2px; background: #000; }
+        .nav-link.active::after {
+            content: ''; position: absolute; bottom: -5px; right: 0;
+            width: 100%; height: 2px; background: #000;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="notification-container"></div>
-
-    <!-- Login -->
     <div id="login-screen" class="fixed inset-0 z-[1000] flex items-center justify-center p-6 text-center transition-opacity duration-1000">
         <div class="max-w-md w-full space-y-8 bg-white/10 backdrop-blur-md p-10 rounded-[3rem] border border-white/20">
             <h1 class="logo-font text-7xl italic font-black text-white">Es</h1>
@@ -68,95 +69,88 @@
                 </div>
                 <div id="step-2" class="hidden space-y-4">
                     <input type="password" id="user-pass-input" placeholder="كلمة المرور" class="w-full p-5 rounded-2xl bg-white/10 text-white text-center font-bold outline-none border border-white/10 focus:border-white transition-all">
-                    <button id="auth-final-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest">دخول وتفعيل الإشعارات</button>
+                    <button id="auth-final-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest">دخول</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="main-app" class="hidden min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100 h-20">
-            <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
+        <header class="sticky top-0 z-[100] bg-white/90 backdrop-blur-md border-b border-gray-100">
+            <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
                 <div class="flex items-center gap-10">
                     <span class="logo-font text-4xl font-black italic cursor-pointer" onclick="location.reload()">Es</span>
                     <nav class="hidden md:flex gap-6">
-                        <span onclick="showPage('home')" id="link-home" class="nav-link active text-[10px] uppercase tracking-widest">المتجر</span>
-                        <span onclick="showPage('orders')" id="link-orders" class="nav-link text-[10px] uppercase tracking-widest">طلباتي</span>
+                        <span onclick="window.showPage('home')" id="link-home" class="nav-link active text-[10px] uppercase tracking-widest">المتجر</span>
+                        <span onclick="window.showPage('orders')" id="link-orders" class="nav-link text-[10px] uppercase tracking-widest">طلباتي</span>
                     </nav>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button id="admin-toggle-btn" class="hidden bg-black text-white px-5 py-2 rounded-full text-[9px] font-black uppercase">الإدارة</button>
-                    <button id="cart-trigger" class="relative p-2.5 bg-gray-100 rounded-full group transition-all">
-                        <svg class="w-5 h-5 group-hover:stroke-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2"/></svg>
+                    <button id="admin-toggle-btn" class="hidden bg-black text-white px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-transform">لوحة الإدارة</button>
+                    <button id="cart-trigger" class="relative p-2.5 bg-gray-100 rounded-full hover:bg-black group transition-all">
+                        <svg class="w-5 h-5 group-hover:stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2"/></svg>
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
                     </button>
-                    <button id="logout-btn" class="p-2 text-gray-300 hover:text-black"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2"/></svg></button>
+                    <button id="logout-btn" class="p-2 text-gray-300 hover:text-black transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2"/></svg>
+                    </button>
                 </div>
             </div>
         </header>
 
-        <!-- Admin Panel -->
-        <div id="admin-panel" class="hidden bg-[#0e0e0e] text-white p-8 border-b-8 border-black shadow-2xl">
+        <div id="admin-panel" class="hidden bg-[#0a0a0a] text-white p-8 border-b-8 border-black shadow-2xl">
             <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10">
                 <div class="lg:col-span-4 space-y-4">
-                    <h3 class="text-[10px] font-black uppercase text-zinc-500 italic">إضافة منتج</h3>
-                    <input type="text" id="p-name" placeholder="الاسم" class="w-full bg-zinc-900 p-4 rounded-xl text-sm outline-none border border-zinc-800 focus:border-white">
-                    <input type="number" id="p-price" placeholder="السعر" class="w-full bg-zinc-900 p-4 rounded-xl text-sm outline-none border border-zinc-800 focus:border-white">
-                    <input type="text" id="p-image" placeholder="رابط الصورة" class="w-full bg-zinc-900 p-4 rounded-xl text-xs outline-none border border-zinc-800 focus:border-white">
-                    <button id="add-product-btn" class="w-full bg-white text-black py-4 rounded-xl font-black text-[10px] uppercase">نشر</button>
-                    <div class="p-4 bg-zinc-900 rounded-xl border border-zinc-800">
-                        <p class="text-[9px] text-zinc-500 mb-1">إجمالي المبيعات</p>
-                        <h4 id="stat-total-sales" class="text-xl font-black italic text-green-500">0 EGP</h4>
-                    </div>
+                    <h3 class="text-[10px] font-black uppercase italic text-zinc-400 tracking-widest mb-2">Add Product</h3>
+                    <input type="text" id="p-name" placeholder="الاسم" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 outline-none text-sm">
+                    <input type="number" id="p-price" placeholder="السعر" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 outline-none text-sm">
+                    <input type="text" id="p-image" placeholder="رابط الصورة" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 outline-none text-sm">
+                    <button id="add-product-btn" class="w-full bg-white text-black py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Publish Now</button>
                 </div>
-                <div class="lg:col-span-8 space-y-4">
-                    <h3 class="text-[10px] font-black uppercase text-zinc-500 italic">الطلبات الواردة</h3>
-                    <div id="all-orders-admin" class="grid grid-cols-1 gap-3 max-h-[400px] overflow-y-auto pr-2"></div>
+                <div class="lg:col-span-8">
+                    <h3 class="text-[10px] font-black uppercase italic text-zinc-400 tracking-widest mb-4">Orders Management</h3>
+                    <div id="all-orders-admin" class="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-2"></div>
                 </div>
             </div>
         </div>
 
         <main id="page-home" class="flex-1 max-w-7xl mx-auto px-6 py-10 w-full">
-            <section class="hero-container border border-gray-100 shadow-sm">
+            <section class="hero-container">
                 <div class="hero-image"></div>
                 <div class="hero-text">
-                    <h2 class="text-7xl font-black italic logo-font leading-none mb-6">Real<br>Pushes</h2>
-                    <p class="text-gray-400 text-xs mb-8 italic">نظام إشعارات حقيقي يعمل عبر المتصفح.</p>
-                    <button onclick="window.scrollTo({top: 800, behavior: 'smooth'})" class="bg-black text-white px-8 py-4 rounded-full font-black text-[9px] uppercase tracking-widest">اكتشف الآن</button>
+                    <p class="text-[10px] font-black uppercase tracking-[1em] text-gray-400 mb-4 italic">Es Exclusive</p>
+                    <h2 class="text-7xl md:text-8xl font-black italic logo-font leading-none mb-6">Master<br>Piece</h2>
+                    <p class="text-gray-400 max-w-sm text-xs leading-relaxed mb-8">قطع تم اختيارها بعناية فائقة لتناسب ذوقك الرفيع.</p>
                 </div>
             </section>
             <div id="products-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-12"></div>
         </main>
 
-        <main id="page-orders" class="hidden flex-1 max-w-4xl mx-auto px-6 py-16 w-full text-center">
-            <h2 class="text-5xl font-black italic logo-font mb-12">My Bag</h2>
+        <main id="page-orders" class="hidden flex-1 max-w-4xl mx-auto px-6 py-16 w-full">
+            <h2 class="text-5xl font-black italic logo-font mb-12 text-center">My History</h2>
             <div id="my-orders-list" class="space-y-4"></div>
         </main>
     </div>
 
-    <!-- Cart Drawer -->
-    <div id="cart-drawer" class="fixed inset-0 z-[1100] bg-black/20 hidden">
-        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-xs bg-white p-8 flex flex-col transform translate-x-full transition-transform duration-500 shadow-2xl">
-            <h2 class="text-3xl font-black italic logo-font mb-10">Bag</h2>
-            <div id="cart-items" class="flex-1 overflow-y-auto space-y-6 pr-2"></div>
-            <div class="pt-8 border-t border-gray-100 mt-6">
-                <div class="flex justify-between font-black text-xl mb-6"><span class="text-[9px] text-gray-400">Total</span><span id="cart-total">0 EGP</span></div>
-                <button id="checkout-btn" class="w-full bg-black text-white py-5 rounded-2xl font-black text-[10px] uppercase">تأكيد الشراء</button>
-                <button id="cart-close" class="w-full text-zinc-300 py-4 text-[10px] font-bold">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Shipping Modal -->
     <div id="shipping-modal" class="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-md hidden flex items-center justify-center p-6">
         <div class="bg-white max-w-md w-full rounded-[3rem] p-10 shadow-2xl">
             <h2 class="text-3xl font-black italic logo-font mb-6">Shipping</h2>
             <div class="space-y-3">
-                <input type="text" id="ship-fullname" placeholder="الاسم" class="w-full p-4 rounded-xl bg-gray-50 text-sm font-bold border outline-none focus:border-black">
-                <input type="tel" id="ship-phone" placeholder="الموبايل" class="w-full p-4 rounded-xl bg-gray-50 text-sm font-bold border outline-none focus:border-black">
-                <textarea id="ship-address" placeholder="العنوان" class="w-full p-4 rounded-xl bg-gray-50 text-sm font-bold border outline-none h-28 resize-none focus:border-black"></textarea>
-                <button id="save-shipping-btn" class="w-full bg-black text-white py-5 rounded-xl font-black mt-2">إرسال الطلب</button>
+                <input type="text" id="ship-fullname" placeholder="الاسم" class="w-full p-4 rounded-xl bg-gray-50 border outline-none font-bold text-sm">
+                <input type="tel" id="ship-phone" placeholder="الموبايل" class="w-full p-4 rounded-xl bg-gray-50 border outline-none font-bold text-sm">
+                <textarea id="ship-address" placeholder="العنوان" class="w-full p-4 rounded-xl bg-gray-50 border outline-none font-bold text-sm h-28"></textarea>
+                <button id="save-shipping-btn" class="w-full bg-black text-white py-5 rounded-xl font-black uppercase tracking-widest">تأكيد الطلب</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-drawer" class="fixed inset-0 z-[1100] bg-black/20 hidden">
+        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-xs bg-white p-8 flex flex-col transform translate-x-full transition-transform duration-500 shadow-2xl">
+            <div class="flex justify-between items-center mb-10"><h2 class="text-3xl font-black italic logo-font">Bag</h2><button id="cart-close" class="text-3xl">&times;</button></div>
+            <div id="cart-items" class="flex-1 overflow-y-auto space-y-6 custom-scrollbar"></div>
+            <div class="pt-8 border-t mt-6">
+                <div class="flex justify-between font-black text-xl italic mb-6"><span>Total</span><span id="cart-total">0 EGP</span></div>
+                <button id="checkout-btn" class="w-full bg-black text-white py-5 rounded-2xl font-black uppercase tracking-widest">إتمام الشراء</button>
             </div>
         </div>
     </div>
@@ -164,7 +158,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-        import { getDatabase, ref, set, onValue, push, remove, get } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push, remove, get, update } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRVGDn1M_zy5p7HGsNV0dLweMKRs_5JzA",
@@ -179,35 +173,16 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const rdb = getDatabase(app);
-        const DB_ROOT = "es_v_native_notifications";
+        const DB_ROOT = "es_v_admin_pro_final";
 
-        let profile = null; let cart = []; let isInitialLoad = true;
+        let profile = null; let cart = [];
+        const orderSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
-        // --- محرك الإشعارات الفعلي (Native Push Engine) ---
-        window.sendNativeNotification = (title, body, icon = "https://cdn-icons-png.flaticon.com/512/3119/3119338.png") => {
-            if (!("Notification" in window)) return;
-            
-            if (Notification.permission === "granted") {
-                new Notification(title, { body, icon });
-            } else if (Notification.permission !== "denied") {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") new Notification(title, { body, icon });
-                });
-            }
+        const showNotify = (msg, color = "#000") => {
+            Toastify({ text: msg, duration: 3000, gravity: "bottom", position: "center", style: { background: color, borderRadius: "15px" } }).showToast();
         };
 
-        // إشعارات داخلية (Toasts) كاحتياط
-        window.toast = (msg) => {
-            const container = document.getElementById('notification-container');
-            const el = document.createElement('div');
-            el.className = 'toast';
-            el.innerText = msg;
-            container.appendChild(el);
-            setTimeout(() => el.classList.add('show'), 100);
-            setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 500); }, 3000);
-        };
-
-        // Auth
+        // الدخول
         document.getElementById('next-btn').onclick = () => {
             if(!document.getElementById('user-name-input').value) return;
             document.getElementById('step-1').classList.add('hidden');
@@ -217,58 +192,87 @@
         document.getElementById('auth-final-btn').onclick = async () => {
             const n = document.getElementById('user-name-input').value.trim();
             const p = document.getElementById('user-pass-input').value.trim();
-            
-            // طلب إذن الإشعارات عند الدخول
-            if ("Notification" in window) await Notification.requestPermission();
-
             const snap = await get(ref(rdb, `${DB_ROOT}/users/${n}`));
+            
             if(!snap.exists()) {
                 await signInAnonymously(auth);
-                await set(ref(rdb, `${DB_ROOT}/users/${n}`), { name: n, password: p, role: (n.toLowerCase().includes('admin')?'admin':'user') });
-            } else if(snap.val().password !== p) { alert("Wrong Password"); return; }
-            
-            localStorage.setItem('es_native_session', n);
+                await set(ref(rdb, `${DB_ROOT}/users/${n}`), { name: n, password: p, role: (n.toLowerCase()==='admin'?'admin':'user') });
+            } else if(snap.val().password !== p) {
+                showNotify("⚠️ كلمة المرور خاطئة", "#ef4444");
+                return;
+            }
+            localStorage.setItem('es_pro_session_key', n);
             location.reload();
         };
 
         onAuthStateChanged(auth, (user) => {
-            const saved = localStorage.getItem('es_native_session');
+            const saved = localStorage.getItem('es_pro_session_key');
             if(saved) {
                 onValue(ref(rdb, `${DB_ROOT}/users/${saved}`), (snap) => {
                     profile = snap.val();
                     if(profile) {
                         document.getElementById('login-screen').classList.add('hidden');
                         document.getElementById('main-app').classList.remove('hidden');
-                        if(profile.role === 'admin') document.getElementById('admin-toggle-btn').classList.remove('hidden');
+                        if(profile.role === 'admin') {
+                            document.getElementById('admin-toggle-btn').classList.remove('hidden');
+                            // مراقبة الطلبات الجديدة للأدمن مع الصوت
+                            onValue(ref(rdb, `${DB_ROOT}/orders`), (snap) => {
+                                const data = snap.val();
+                                if(data) {
+                                    const latest = Object.values(data).pop();
+                                    if(latest && (Date.now() - latest.timestamp < 5000)) {
+                                        orderSound.play().catch(() => {});
+                                        showNotify("🛍️ طلبية جديدة وصلت!", "#3b82f6");
+                                    }
+                                }
+                            });
+                        }
                         loadStore(); loadOrders();
                     }
                 });
             }
         });
 
+        // المتجر
         function loadStore() {
             onValue(ref(rdb, `${DB_ROOT}/products`), (snap) => {
                 const grid = document.getElementById('products-grid'); grid.innerHTML = '';
                 const data = snap.val(); if(!data) return;
                 Object.keys(data).reverse().forEach(id => {
                     const p = data[id];
-                    grid.innerHTML += `
-                        <div class="product-card group">
-                            <div class="image-container shadow-sm">
-                                <img src="${p.image || 'https://images.pexels.com/photos/157675/pexels-photo-157675.jpeg?auto=compress&cs=tinysrgb&w=800'}">
-                                <div class="absolute inset-x-0 bottom-3 px-3 translate-y-20 group-hover:translate-y-0 transition-all duration-500">
-                                    <button onclick="window.addToCart('${id}','${p.name}',${p.price})" class="w-full bg-black text-white py-3 rounded-xl font-black text-[9px] uppercase">إضافة للسلة</button>
-                                </div>
-                                ${profile.role==='admin' ? `<button onclick="window.delP('${id}')" class="absolute top-3 right-3 bg-red-500 text-white w-6 h-6 rounded-full text-[10px]">×</button>` : ''}
-                            </div>
-                            <div class="mt-4 text-center">
-                                <h4 class="font-black italic text-[10px] uppercase mb-0.5">${p.name}</h4>
-                                <p class="text-gray-400 font-bold text-[9px]">${p.price} EGP</p>
-                            </div>
-                        </div>`;
+                    grid.innerHTML += `<div class="product-card group"><div class="image-container"><img src="${p.image}"><div class="absolute inset-x-0 bottom-3 px-3"><button onclick="window.addToCart('${id}','${p.name}',${p.price})" class="w-full bg-black text-white py-3 rounded-xl font-black text-[9px] uppercase tracking-widest">أضف للحقيبة</button></div>${profile.role==='admin' ? `<button onclick="window.delP('${id}')" class="absolute top-3 right-3 bg-red-500 text-white w-6 h-6 rounded-full text-[10px] font-bold">×</button>` : ''}</div><div class="mt-4 text-center"><h4 class="font-black italic uppercase text-[10px] mb-0.5">${p.name}</h4><p class="text-gray-400 font-bold text-[9px]">${p.price} EGP</p></div></div>`;
                 });
             });
         }
+
+        // السلة
+        window.addToCart = (id,n,p) => {
+            const ex = cart.find(i=>i.id===id);
+            if(ex) ex.qty++; else cart.push({id,name:n,price:p,qty:1});
+            updateCartUI();
+            showNotify(`👜 تمت إضافة ${n}`);
+        };
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const list = document.getElementById('cart-items'); list.innerHTML = ''; let t = 0;
+            cart.forEach((i, idx) => {
+                t += (i.price * i.qty);
+                list.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl"><div><p class="font-black italic text-[10px] uppercase">${i.name}</p><p class="text-[9px] text-gray-400">${i.price} EGP</p></div><div class="flex items-center gap-3"><button onclick="window.q(${idx},-1)">-</button><span class="text-[10px] font-black">${i.qty}</span><button onclick="window.q(${idx},1)">+</button></div></div>`;
+            });
+            document.getElementById('cart-total').innerText = t + " EGP";
+        }
+        window.q = (idx, d) => { cart[idx].qty += d; if(cart[idx].qty<1) cart.splice(idx,1); updateCartUI(); };
+
+        // إدارة الطلبات (الأدمن)
+        window.updateOrderStatus = (id, status) => {
+            if(status === 'cancel') {
+                if(confirm("هل أنت متأكد من إلغاء وحذف هذا الطلب نهائياً؟")) remove(ref(rdb, `${DB_ROOT}/orders/${id}`));
+            } else {
+                update(ref(rdb, `${DB_ROOT}/orders/${id}`), { status: status });
+                showNotify(`✔️ الحالة الآن: ${status}`, "#10b981");
+            }
+        };
 
         function loadOrders() {
             onValue(ref(rdb, `${DB_ROOT}/orders`), (snap) => {
@@ -277,97 +281,58 @@
                 my.innerHTML = ''; adm.innerHTML = '';
                 const data = snap.val(); if(!data) return;
                 
-                const entries = Object.entries(data).reverse();
-
-                // إشعار حقيقي للأدمن عند وصول طلب جديد
-                if (profile.role === 'admin' && !isInitialLoad) {
-                    window.sendNativeNotification("Es Store - طلب جديد! 📦", "لديك طلب جديد ينتظر المراجعة في لوحة الإدارة.");
-                }
-                isInitialLoad = false;
-
-                let total = 0;
-                entries.forEach(([id, o]) => {
-                    total += parseInt(o.total);
-                    const html = `<div class="bg-gray-50 p-6 rounded-3xl flex justify-between items-center border border-gray-100">
-                        <div class="text-right"><p class="text-[8px] text-gray-300 font-black italic">ID: ..${id.slice(-4)}</p><h4 class="font-black italic text-xs">${o.items.map(i=>i.name).join(', ')}</h4></div>
-                        <div class="font-black italic text-md">${o.total}</div>
-                    </div>`;
-                    if(o.userName === profile.name) my.innerHTML += html;
+                Object.entries(data).reverse().forEach(([id, o]) => {
+                    const statusText = o.status || 'قيد الانتظار';
+                    const statusColor = statusText === 'تم التوصيل' ? 'text-green-500' : (statusText === 'تأجيل الطلب' ? 'text-yellow-500' : 'text-gray-400');
+                    
+                    // للمستخدم
+                    if(o.userName === profile.name) {
+                        my.innerHTML += `<div class="bg-white p-6 rounded-3xl border border-gray-100 flex justify-between items-center shadow-sm"><div class="flex items-center gap-4"><div class="h-10 w-1 bg-black rounded-full"></div><div><h4 class="font-black italic text-xs">${o.items.map(i=>`${i.qty}x ${i.name}`).join(' - ')}</h4><p class="text-[8px] font-black mt-1 uppercase ${statusColor}">${statusText}</p></div></div><div class="font-black italic text-md">${o.total}</div></div>`;
+                    }
+                    
+                    // للأدمن
                     if(profile.role === 'admin') {
-                        adm.innerHTML += `<div class="bg-white/5 p-4 rounded-xl flex justify-between items-center border border-white/5">
-                            <div class="text-[9px] text-zinc-400"><b>${o.userName}</b> - ${o.total} EGP</div>
-                            <button onclick="window.delO('${id}')" class="bg-white text-black px-4 py-1.5 rounded-lg font-black text-[8px]">تم</button>
+                        adm.innerHTML += `<div class="bg-white/5 p-5 rounded-2xl border border-white/5 space-y-4">
+                            <div class="flex justify-between items-center"><span class="bg-white text-black px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest">${o.userName}</span><span class="text-xs font-black italic text-green-400">${o.total}</span></div>
+                            <div class="text-[9px] text-zinc-400 leading-relaxed"><p>📦 ${o.items.map(i=>i.name).join(', ')}</p><p>📍 ${o.shipping.address}</p><p>📞 ${o.shipping.phone}</p><p class="mt-2 text-white font-bold italic">الحالة الحالية: ${statusText}</p></div>
+                            <div class="flex gap-2">
+                                <button onclick="window.updateOrderStatus('${id}','تم التوصيل')" class="flex-1 bg-green-600 text-[8px] font-black py-2.5 rounded-lg uppercase">توصيل</button>
+                                <button onclick="window.updateOrderStatus('${id}','تأجيل الطلب')" class="flex-1 bg-yellow-600 text-[8px] font-black py-2.5 rounded-lg uppercase">تأجيل</button>
+                                <button onclick="window.updateOrderStatus('${id}','cancel')" class="bg-red-900/50 p-2.5 rounded-lg text-red-500">إلغاء</button>
+                            </div>
                         </div>`;
                     }
                 });
-                document.getElementById('stat-total-sales').innerText = total + " EGP";
             });
         }
 
-        window.addToCart = (id,n,p) => {
-            const ex = cart.find(i=>i.id===id);
-            if(ex) ex.qty++; else cart.push({id,name:n,price:p,qty:1});
-            window.toast(`تمت إضافة ${n} إلى الحقيبة`);
-            updateCartUI();
-        };
-
-        function updateCartUI() {
-            document.getElementById('cart-count').innerText = cart.length;
-            const list = document.getElementById('cart-items'); list.innerHTML = ''; let t = 0;
-            cart.forEach((i, idx) => {
-                t += (i.price * i.qty);
-                list.innerHTML += `<div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
-                    <p class="font-black italic text-[10px] uppercase">${i.name}</p>
-                    <div class="flex items-center gap-3 bg-white px-3 py-1 rounded-full border">
-                        <button onclick="window.q(${idx},-1)" class="font-black text-gray-200 hover:text-black">-</button>
-                        <span class="font-black text-[10px] italic">${i.qty}</span>
-                        <button onclick="window.q(${idx},1)" class="font-black text-gray-200 hover:text-black">+</button>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('cart-total').innerText = t + " EGP";
-        }
-
-        window.q = (idx, d) => { cart[idx].qty += d; if(cart[idx].qty<1) cart.splice(idx,1); updateCartUI(); };
-
-        document.getElementById('checkout-btn').onclick = () => {
-            if(!cart.length) return;
-            document.getElementById('shipping-modal').classList.remove('hidden');
-        };
-
+        // إتمام الطلب
+        document.getElementById('checkout-btn').onclick = () => { if(cart.length) document.getElementById('shipping-modal').classList.remove('hidden'); };
         document.getElementById('save-shipping-btn').onclick = async () => {
             const sh = { name: document.getElementById('ship-fullname').value, phone: document.getElementById('ship-phone').value, address: document.getElementById('ship-address').value };
-            if(!sh.name || !sh.phone || !sh.address) return;
-            
-            await push(ref(rdb, `${DB_ROOT}/orders`), { userName: profile.name, items: cart, total: document.getElementById('cart-total').innerText, shipping: sh, timestamp: Date.now() });
-            
-            // إشعار حقيقي للمستخدم عند إتمام الطلب
-            window.sendNativeNotification("تم استلام طلبك! ✅", "شكراً لك لتسوقك من Es. سنقوم بتوصيل طلبك في أقرب وقت.");
-            
-            cart = []; updateCartUI(); 
-            document.getElementById('shipping-modal').classList.add('hidden'); 
-            document.getElementById('cart-drawer').classList.add('hidden');
+            if(!sh.name || !sh.phone || !sh.address) return showNotify("⚠️ بيانات ناقصة", "#f59e0b");
+            await push(ref(rdb, `${DB_ROOT}/orders`), { userName: profile.name, items: cart, total: document.getElementById('cart-total').innerText, shipping: sh, status: 'قيد الانتظار', timestamp: Date.now() });
+            cart = []; updateCartUI(); document.getElementById('shipping-modal').classList.add('hidden');
+            document.getElementById('cart-close').click(); showNotify("✅ تم إرسال طلبك بنجاح", "#10b981");
         };
 
+        // إضافة منتج (أدمن)
         document.getElementById('add-product-btn').onclick = async () => {
-            const n = document.getElementById('p-name').value;
-            const p = Number(document.getElementById('p-price').value);
-            const i = document.getElementById('p-image').value;
-            if(!n || !p) return;
+            const n = document.getElementById('p-name').value; const p = document.getElementById('p-price').value; const i = document.getElementById('p-image').value;
+            if(!n || !p) return showNotify("بيانات المنتج ناقصة");
             await push(ref(rdb, `${DB_ROOT}/products`), { name: n, price: p, image: i, timestamp: Date.now() });
-            window.toast("تم نشر المنتج بنجاح");
+            showNotify("✨ تم النشر");
             document.getElementById('p-name').value=''; document.getElementById('p-price').value=''; document.getElementById('p-image').value='';
         };
 
-        window.delP = (id) => remove(ref(rdb, `${DB_ROOT}/products/${id}`));
-        window.delO = (id) => remove(ref(rdb, `${DB_ROOT}/orders/${id}`));
-        
+        window.delP = (id) => { if(confirm("حذف المنتج؟")) remove(ref(rdb, `${DB_ROOT}/products/${id}`)); };
         window.showPage = (id) => {
             document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
             document.getElementById(`page-${id}`).classList.remove('hidden');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(`link-${id}`).classList.add('active');
         };
+
         document.getElementById('admin-toggle-btn').onclick = () => document.getElementById('admin-panel').classList.toggle('hidden');
         document.getElementById('cart-trigger').onclick = () => { document.getElementById('cart-drawer').classList.remove('hidden'); setTimeout(()=>document.getElementById('cart-inner').classList.remove('translate-x-full'),10); };
         document.getElementById('cart-close').onclick = () => { document.getElementById('cart-inner').classList.add('translate-x-full'); setTimeout(()=>document.getElementById('cart-drawer').classList.add('hidden'),500); };
