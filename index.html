@@ -6,7 +6,6 @@
     <title>Es Store | Admin Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
@@ -14,45 +13,16 @@
         :root { --primary: #000; }
         body { font-family: 'Cairo', sans-serif; background: #fff; color: #000; overflow-x: hidden; }
         .logo-font { font-family: 'Playfair Display', serif; }
-
-        #login-screen {
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-                              url('https://images.pexels.com/photos/1884581/pexels-photo-1884581.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
-            background-size: cover; background-position: center;
-        }
-
-        .hero-container {
-            display: flex; align-items: center; background: #f9f9f9;
-            border-radius: 3rem; overflow: hidden; margin-bottom: 5rem;
-            min-height: 500px; border: 1px solid #f1f1f1;
-        }
-
-        .hero-image {
-            width: 50%; height: 600px;
-            background-image: url('https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
-            background-size: cover; background-position: center;
-        }
-
+        #login-screen { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.pexels.com/photos/1884581/pexels-photo-1884581.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'); background-size: cover; background-position: center; }
+        .hero-container { display: flex; align-items: center; background: #f9f9f9; border-radius: 3rem; overflow: hidden; margin-bottom: 5rem; min-height: 500px; border: 1px solid #f1f1f1; }
+        .hero-image { width: 50%; height: 600px; background-image: url('https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'); background-size: cover; background-position: center; }
         .hero-text { width: 50%; padding: 4rem; text-align: right; }
-
         .product-card { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .product-card:hover { transform: translateY(-10px); }
-
-        .image-container {
-            overflow: hidden; border-radius: 2rem; background: #eee;
-            aspect-ratio: 3/4; position: relative;
-        }
-
+        .image-container { overflow: hidden; border-radius: 2rem; background: #eee; aspect-ratio: 3/4; position: relative; }
         .image-container img { transition: transform 1.2s ease; width: 100%; height: 100%; object-fit: cover; }
-        .product-card:hover img { transform: scale(1.1); }
-
         .nav-link { position: relative; font-weight: 700; transition: all 0.3s; color: #999; cursor: pointer; }
         .nav-link.active { color: #000; }
-        .nav-link.active::after {
-            content: ''; position: absolute; bottom: -5px; right: 0;
-            width: 100%; height: 2px; background: #000;
-        }
-
+        .nav-link.active::after { content: ''; position: absolute; bottom: -5px; right: 0; width: 100%; height: 2px; background: #000; }
         .custom-scrollbar::-webkit-scrollbar { width: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
     </style>
@@ -86,7 +56,7 @@
                     </nav>
                 </div>
                 <div class="flex items-center gap-4">
-                    <button id="admin-toggle-btn" class="hidden bg-black text-white px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-transform">لوحة الإدارة</button>
+                    <button id="admin-toggle-btn" class="hidden bg-black text-white px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest">لوحة الإدارة</button>
                     <button id="cart-trigger" class="relative p-2.5 bg-gray-100 rounded-full hover:bg-black group transition-all">
                         <svg class="w-5 h-5 group-hover:stroke-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2"/></svg>
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
@@ -98,17 +68,17 @@
             </div>
         </header>
 
-        <div id="admin-panel" class="hidden bg-[#0a0a0a] text-white p-8 border-b-8 border-black shadow-2xl">
+        <div id="admin-panel" class="hidden bg-[#0a0a0a] text-white p-8 border-b-8 border-black">
             <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10">
                 <div class="lg:col-span-4 space-y-4">
-                    <h3 class="text-[10px] font-black uppercase italic text-zinc-400 tracking-widest mb-2">Add Product</h3>
+                    <h3 class="text-[10px] font-black uppercase italic text-zinc-400 tracking-widest mb-2">إضافة منتج</h3>
                     <input type="text" id="p-name" placeholder="الاسم" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 outline-none text-sm">
                     <input type="number" id="p-price" placeholder="السعر" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 outline-none text-sm">
                     <input type="text" id="p-image" placeholder="رابط الصورة" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 outline-none text-sm">
-                    <button id="add-product-btn" class="w-full bg-white text-black py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Publish Now</button>
+                    <button id="add-product-btn" class="w-full bg-white text-black py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">نشر الآن</button>
                 </div>
                 <div class="lg:col-span-8">
-                    <h3 class="text-[10px] font-black uppercase italic text-zinc-400 tracking-widest mb-4">Orders Management</h3>
+                    <h3 class="text-[10px] font-black uppercase italic text-zinc-400 tracking-widest mb-4">إدارة الطلبات</h3>
                     <div id="all-orders-admin" class="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-2"></div>
                 </div>
             </div>
@@ -139,7 +109,7 @@
                 <input type="text" id="ship-fullname" placeholder="الاسم" class="w-full p-4 rounded-xl bg-gray-50 border outline-none font-bold text-sm">
                 <input type="tel" id="ship-phone" placeholder="الموبايل" class="w-full p-4 rounded-xl bg-gray-50 border outline-none font-bold text-sm">
                 <textarea id="ship-address" placeholder="العنوان" class="w-full p-4 rounded-xl bg-gray-50 border outline-none font-bold text-sm h-28"></textarea>
-                <button id="save-shipping-btn" class="w-full bg-black text-white py-5 rounded-xl font-black uppercase tracking-widest">تأكيد الطلب</button>
+                <button id="save-shipping-btn" class="w-full bg-black text-white py-5 rounded-xl font-black uppercase mt-2">تأكيد الطلب</button>
             </div>
         </div>
     </div>
@@ -215,7 +185,6 @@
                         document.getElementById('main-app').classList.remove('hidden');
                         if(profile.role === 'admin') {
                             document.getElementById('admin-toggle-btn').classList.remove('hidden');
-                            // مراقبة الطلبات الجديدة للأدمن مع الصوت
                             onValue(ref(rdb, `${DB_ROOT}/orders`), (snap) => {
                                 const data = snap.val();
                                 if(data) {
@@ -264,13 +233,13 @@
         }
         window.q = (idx, d) => { cart[idx].qty += d; if(cart[idx].qty<1) cart.splice(idx,1); updateCartUI(); };
 
-        // إدارة الطلبات (الأدمن)
+        // إدارة الطلبات
         window.updateOrderStatus = (id, status) => {
             if(status === 'cancel') {
-                if(confirm("هل أنت متأكد من إلغاء وحذف هذا الطلب نهائياً؟")) remove(ref(rdb, `${DB_ROOT}/orders/${id}`));
+                if(confirm("هل أنت متأكد من إلغاء وحذف هذا الطلب؟")) remove(ref(rdb, `${DB_ROOT}/orders/${id}`));
             } else {
                 update(ref(rdb, `${DB_ROOT}/orders/${id}`), { status: status });
-                showNotify(`✔️ الحالة الآن: ${status}`, "#10b981");
+                showNotify(`✔️ تم التحديث إلى: ${status}`, "#10b981");
             }
         };
 
@@ -280,24 +249,21 @@
                 const adm = document.getElementById('all-orders-admin');
                 my.innerHTML = ''; adm.innerHTML = '';
                 const data = snap.val(); if(!data) return;
-                
                 Object.entries(data).reverse().forEach(([id, o]) => {
                     const statusText = o.status || 'قيد الانتظار';
                     const statusColor = statusText === 'تم التوصيل' ? 'text-green-500' : (statusText === 'تأجيل الطلب' ? 'text-yellow-500' : 'text-gray-400');
                     
-                    // للمستخدم
                     if(o.userName === profile.name) {
                         my.innerHTML += `<div class="bg-white p-6 rounded-3xl border border-gray-100 flex justify-between items-center shadow-sm"><div class="flex items-center gap-4"><div class="h-10 w-1 bg-black rounded-full"></div><div><h4 class="font-black italic text-xs">${o.items.map(i=>`${i.qty}x ${i.name}`).join(' - ')}</h4><p class="text-[8px] font-black mt-1 uppercase ${statusColor}">${statusText}</p></div></div><div class="font-black italic text-md">${o.total}</div></div>`;
                     }
                     
-                    // للأدمن
                     if(profile.role === 'admin') {
                         adm.innerHTML += `<div class="bg-white/5 p-5 rounded-2xl border border-white/5 space-y-4">
-                            <div class="flex justify-between items-center"><span class="bg-white text-black px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest">${o.userName}</span><span class="text-xs font-black italic text-green-400">${o.total}</span></div>
-                            <div class="text-[9px] text-zinc-400 leading-relaxed"><p>📦 ${o.items.map(i=>i.name).join(', ')}</p><p>📍 ${o.shipping.address}</p><p>📞 ${o.shipping.phone}</p><p class="mt-2 text-white font-bold italic">الحالة الحالية: ${statusText}</p></div>
+                            <div class="flex justify-between items-center"><span class="bg-white text-black px-4 py-1 rounded-full text-[8px] font-black uppercase">${o.userName}</span><span class="text-xs font-black italic text-green-400">${o.total}</span></div>
+                            <div class="text-[9px] text-zinc-400 leading-relaxed"><p>📦 ${o.items.map(i=>i.name).join(', ')}</p><p>📍 ${o.shipping.address}</p><p>📞 ${o.shipping.phone}</p><p class="mt-2 text-white font-bold italic">الحالة: ${statusText}</p></div>
                             <div class="flex gap-2">
-                                <button onclick="window.updateOrderStatus('${id}','تم التوصيل')" class="flex-1 bg-green-600 text-[8px] font-black py-2.5 rounded-lg uppercase">توصيل</button>
-                                <button onclick="window.updateOrderStatus('${id}','تأجيل الطلب')" class="flex-1 bg-yellow-600 text-[8px] font-black py-2.5 rounded-lg uppercase">تأجيل</button>
+                                <button onclick="window.updateOrderStatus('${id}','تم التوصيل')" class="flex-1 bg-green-600 text-[8px] font-black py-2.5 rounded-lg">توصيل</button>
+                                <button onclick="window.updateOrderStatus('${id}','تأجيل الطلب')" class="flex-1 bg-yellow-600 text-[8px] font-black py-2.5 rounded-lg">تأجيل</button>
                                 <button onclick="window.updateOrderStatus('${id}','cancel')" class="bg-red-900/50 p-2.5 rounded-lg text-red-500">إلغاء</button>
                             </div>
                         </div>`;
@@ -306,20 +272,18 @@
             });
         }
 
-        // إتمام الطلب
         document.getElementById('checkout-btn').onclick = () => { if(cart.length) document.getElementById('shipping-modal').classList.remove('hidden'); };
         document.getElementById('save-shipping-btn').onclick = async () => {
             const sh = { name: document.getElementById('ship-fullname').value, phone: document.getElementById('ship-phone').value, address: document.getElementById('ship-address').value };
             if(!sh.name || !sh.phone || !sh.address) return showNotify("⚠️ بيانات ناقصة", "#f59e0b");
             await push(ref(rdb, `${DB_ROOT}/orders`), { userName: profile.name, items: cart, total: document.getElementById('cart-total').innerText, shipping: sh, status: 'قيد الانتظار', timestamp: Date.now() });
             cart = []; updateCartUI(); document.getElementById('shipping-modal').classList.add('hidden');
-            document.getElementById('cart-close').click(); showNotify("✅ تم إرسال طلبك بنجاح", "#10b981");
+            document.getElementById('cart-close').click(); showNotify("✅ تم الإرسال بنجاح", "#10b981");
         };
 
-        // إضافة منتج (أدمن)
         document.getElementById('add-product-btn').onclick = async () => {
             const n = document.getElementById('p-name').value; const p = document.getElementById('p-price').value; const i = document.getElementById('p-image').value;
-            if(!n || !p) return showNotify("بيانات المنتج ناقصة");
+            if(!n || !p) return showNotify("بيانات ناقصة");
             await push(ref(rdb, `${DB_ROOT}/products`), { name: n, price: p, image: i, timestamp: Date.now() });
             showNotify("✨ تم النشر");
             document.getElementById('p-name').value=''; document.getElementById('p-price').value=''; document.getElementById('p-image').value='';
