@@ -12,8 +12,8 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
-          // !!! استبدل "ضع_هنا_الـ_Public_Key" بالمفتاح الفعلي من حسابك !!!
-          emailjs.init("570Tjsoq6JAdmXtqW"); 
+          // !!! اذهب إلى موقع EmailJS -> Account -> API Keys وانسخ الـ Public Key وضعه هنا !!!
+          emailjs.init("Ru84Q4SIEnQZjbfL4"); 
        })();
     </script>
 
@@ -276,7 +276,7 @@
 
         document.getElementById('checkout-btn').onclick = () => { if(cart.length) document.getElementById('shipping-modal').classList.remove('hidden'); };
 
-        // تعديل وظيفة حفظ الطلب لإرسال الإيميل
+        // تعديل وظيفة حفظ الطلب لإرسال الإيميل الجديد
         document.getElementById('save-shipping-btn').onclick = async () => {
             const sh = { 
                 name: document.getElementById('ship-fullname').value, 
@@ -291,7 +291,7 @@
                 order_details: cart.map(i => `${i.qty}x ${i.name}`).join(' - '),
                 total_price: document.getElementById('cart-total').innerText,
                 shipping_info: `الهاتف: ${sh.phone} | العنوان: ${sh.address}`,
-                to_email: 'ea6902883@gmail.com'
+                to_email: 'esa381622@gmail.com' // تم التحديث للإيميل المطلوب
             };
 
             try {
@@ -301,7 +301,7 @@
                     shipping: sh, status: 'قيد الانتظار', timestamp: Date.now() 
                 });
 
-                // إرسال الإشعار عبر EmailJS
+                // إرسال الإشعار عبر EmailJS بالبيانات المتاحة
                 emailjs.send('service_erih35c', 'template_sz7avjj', templateParams)
                     .then(() => console.log('Notification Sent'), (err) => console.log('Email Error', err));
 
