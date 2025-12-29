@@ -1,247 +1,233 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Es Store | Youth & Casual Elite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Es Store | The Ultimate Experience</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <!-- EmailJS Integration -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript"> (function(){ emailjs.init("Ru84Q4SIEnQZjbfL4"); })(); </script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("Ru84Q4SIEnQZjbfL4"); // مفتاحك الخاص
+       })();
+    </script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { darkBg: '#0a0a0a', darkCard: '#141414' }
+                }
+            }
+        }
+    </script>
 
     <style>
-        :root { 
-            --accent: #000; 
-            --bg-light: #ffffff;
-            --bg-dark: #0a0a0a;
-        }
-        
-        body { font-family: 'Cairo', sans-serif; transition: all 0.4s ease; overflow-x: hidden; scroll-behavior: smooth; }
-        body.light-mode { background: var(--bg-light); color: #000; }
-        body.dark-mode { background: var(--bg-dark); color: #fff; }
-
+        body { font-family: 'Cairo', sans-serif; transition: background-color 0.5s ease, color 0.5s ease; }
         .logo-font { font-family: 'Playfair Display', serif; }
-
-        /* شاشة الدخول */
-        #login-screen { 
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
-            position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center;
+        .dark body { background-color: #0a0a0a; color: #fff; }
+        .modal-content { 
+            max-height: 90vh; 
+            overflow-y: auto !important; 
+            border-radius: 2.5rem 2.5rem 0 0 !important; 
+            display: flex;
+            flex-direction: column;
         }
-        #login-screen.hidden { display: none; }
-
-        .login-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3rem; border-radius: 3rem; width: 90%; max-width: 400px; text-align: center;
+        @media (min-width: 768px) { 
+            .modal-content { border-radius: 4rem !important; max-height: 85vh; flex-direction: row; overflow-y: hidden !important; } 
+            .modal-scroll-area { overflow-y: auto; max-height: 85vh; }
         }
-
-        /* الهيرو */
-        .hero-section { 
-            position: relative; height: 75vh; border-radius: 3.5rem; margin-bottom: 3rem; overflow: hidden;
-            background: url('https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1974&auto=format&fit=crop') center/cover;
-            display: flex; align-items: flex-end; padding: 4rem;
-        }
-        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 70%); }
-
-        /* تعديلات الخطوط */
-        .text-xs-custom { font-size: 0.65rem; letter-spacing: 0.1em; font-weight: 800; text-transform: uppercase; }
-        .text-sm-custom { font-size: 0.85rem; font-weight: 600; }
-
-        input { 
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 16px 24px; border-radius: 18px; outline: none; transition: 0.3s;
-            font-size: 0.85rem; width: 100%;
-        }
-        .light-mode #main-app input { background: #f9f9f9; border-color: #eee; color: #000; }
-        .dark-mode #main-app input { background: #151515; border-color: #222; color: #fff; }
-        
-        .product-card { border-radius: 2rem; overflow: hidden; transition: 0.4s ease; cursor: pointer; }
-        .product-card:hover { transform: translateY(-8px); }
-        .img-wrapper { aspect-ratio: 1/1.25; overflow: hidden; border-radius: 2rem; background: #f4f4f4; position: relative; }
-        .img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s ease; }
-        .product-card:hover .img-wrapper img { transform: scale(1.08); }
-
-        /* نافذة المنتج المطورة */
-        #product-modal-content {
-            max-width: 1000px;
-            width: 95%;
-            height: auto;
-            max-height: 90vh;
-            border-radius: 3rem;
-        }
-        .btn-size-color {
-            padding: 8px 16px;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            transition: 0.2s;
-        }
-        .dark-mode .btn-size-color { border-color: #27272a; }
-
-        .hidden { display: none !important; }
-        
-        .marquee-bar { background: #000; color: #fff; padding: 10px 0; font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; }
-        .marquee-content { display: inline-block; animation: marquee 25s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-        /* تحسين السكرول بار */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        .hero-gradient { background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8)); }
+        .color-dot { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #eee; position: relative; cursor: pointer; }
+        .color-dot.active { border-color: #000; transform: scale(1.1); }
+        .dark .color-dot.active { border-color: #fff; }
+        .size-btn { padding: 12px 20px; border-radius: 12px; border: 1.5px solid #eee; font-weight: 800; transition: 0.3s; }
+        .size-btn.active { background: #000; color: #fff; border-color: #000; }
+        .dark .size-btn.active { background: #fff; color: #000; border-color: #fff; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
     </style>
 </head>
-<body class="light-mode">
-
-    <div class="marquee-bar">
-        <div class="marquee-content">
-            FREE SHIPPING ON ORDERS OVER 1500 EGP • LIMITED URBAN DROP 2025 • STREETWEAR ESSENTIALS • ES STORE CASUAL VIBES •
-        </div>
-    </div>
+<body class="light">
 
     <!-- شاشة الدخول -->
-    <div id="login-screen">
-        <div class="login-card">
-            <h1 class="logo-font text-7xl italic font-black text-white mb-4">Es</h1>
-            <p class="text-white/40 text-[9px] font-black uppercase tracking-[0.4em] mb-8">Youth Collection</p>
+    <div id="login-screen" class="fixed inset-0 z-[3000] flex items-center justify-center p-6 text-white text-center" style="background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'); background-size: cover;">
+        <div class="w-full max-w-sm bg-white/5 backdrop-blur-2xl p-10 rounded-[3.5rem] border border-white/10 text-center">
+            <h1 class="logo-font text-8xl italic font-black mb-10">Es</h1>
             <div id="step-1" class="space-y-4">
-                <input type="text" id="user-name-input" placeholder="Name" class="text-center text-white">
-                <button id="next-btn" class="w-full bg-white text-black py-4 rounded-2xl font-black uppercase text-xs hover:bg-gray-100 transition-all">Next</button>
+                <input type="text" id="user-name-input" placeholder="اسم المستخدم" class="w-full p-5 rounded-2xl bg-white/10 text-center outline-none border border-white/5 focus:border-white/30">
+                <button id="next-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest active:scale-95">متابعة</button>
             </div>
             <div id="step-2" class="hidden space-y-4">
-                <input type="password" id="user-pass-input" placeholder="Password" class="text-center text-white">
-                <button id="auth-final-btn" class="w-full bg-white text-black py-4 rounded-2xl font-black uppercase text-xs hover:bg-gray-100 transition-all">Enter</button>
+                <input type="password" id="user-pass-input" placeholder="كلمة المرور" class="w-full p-5 rounded-2xl bg-white/10 text-center outline-none border border-white/5 focus:border-white/30">
+                <button id="auth-final-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest active:scale-95">دخول</button>
             </div>
         </div>
     </div>
 
-    <!-- التطبيق الرئيسي -->
     <div id="main-app" class="hidden min-h-screen flex flex-col">
-        <header class="sticky top-0 z-[100] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-900">
-            <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-                <div class="flex items-center gap-10">
-                    <span class="logo-font text-4xl font-black italic cursor-pointer" onclick="showPage('home')">Es</span>
-                    <nav class="hidden md:flex gap-8">
-                        <span onclick="showPage('home')" class="text-xs-custom cursor-pointer hover:opacity-50 transition-opacity">Shop</span>
-                        <span onclick="showPage('orders')" class="text-xs-custom cursor-pointer hover:opacity-50 transition-opacity">My Orders</span>
-                    </nav>
+        <!-- الهيدر -->
+        <header class="sticky top-0 z-[100] bg-white/80 dark:bg-zinc-950/80 backdrop-blur-lg border-b border-gray-100 dark:border-zinc-900">
+            <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center w-full">
+                <div class="flex items-center gap-4">
+                    <span class="logo-font text-4xl font-black italic cursor-pointer dark:text-white" onclick="location.reload()">Es</span>
+                    <button id="mode-toggle" class="p-2 bg-gray-100 dark:bg-zinc-800 rounded-full">
+                        <svg id="sun-icon" class="w-5 h-5 hidden dark:block text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+                        <svg id="moon-icon" class="w-5 h-5 block dark:hidden text-zinc-600" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+                    </button>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button id="mode-toggle" class="p-3 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-width="2.5"/></svg></button>
-                    <button id="admin-toggle-btn" class="hidden bg-black text-white dark:bg-white dark:text-black px-5 py-2 rounded-full text-[9px] font-black uppercase">Admin</button>
-                    <button id="cart-trigger" class="relative p-3 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-900">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2"/></svg>
-                        <span id="cart-count" class="absolute top-1 right-1 bg-black text-white dark:bg-white dark:text-black text-[8px] w-5 h-5 rounded-full flex items-center justify-center font-black">0</span>
+                    <button id="admin-toggle-btn" class="hidden bg-black dark:bg-white dark:text-black text-white px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em]">Dashboard</button>
+                    <button id="cart-trigger" class="relative p-3 bg-gray-50 dark:bg-zinc-800 rounded-full">
+                        <svg class="w-5 h-5 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2"/></svg>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-black">0</span>
                     </button>
-                    <!-- أضفت زر تسجيل الخروج ليكون موجوداً فعلياً في الواجهة لتجنب خطأ الـ null -->
-                    <button id="logout-btn" class="p-3 rounded-full hover:bg-red-100 dark:hover:bg-red-900 text-red-500 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </button>
+                    <button id="logout-btn" class="p-2 text-zinc-400 hover:text-red-500 transition-colors"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7" stroke-width="2"/></svg></button>
                 </div>
             </div>
         </header>
 
-        <!-- لوحة التحكم -->
-        <div id="admin-panel" class="hidden p-8 bg-gray-50 dark:bg-zinc-950 border-b border-gray-200 dark:border-zinc-900">
-            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div class="space-y-4">
-                    <h3 class="text-xs-custom text-gray-400">Add New Drop</h3>
-                    <input type="text" id="p-name" placeholder="Product Name">
-                    <input type="number" id="p-price" placeholder="Price (EGP)">
-                    <input type="text" id="p-images" placeholder="Image URL">
-                    <input type="text" id="p-sizes" placeholder="Sizes (S, M, L...)" value="S, M, L, XL, XXL">
-                    <input type="text" id="p-colors" placeholder="Colors (Black, Grey...)">
-                    <button id="add-product-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-4 rounded-2xl font-black uppercase text-xs">Publish Drop</button>
-                </div>
-                <div class="space-y-4">
-                    <h3 class="text-xs-custom text-gray-400">Active Orders</h3>
-                    <div id="all-orders-admin" class="max-h-[400px] overflow-y-auto space-y-3"></div>
-                </div>
+        <!-- Hero Section -->
+        <div id="hero-section" class="relative h-[70vh] w-full overflow-hidden">
+            <img src="https://images.pexels.com/photos/1884581/pexels-photo-1884581.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 hero-gradient flex flex-col items-center justify-center text-white text-center px-6">
+                <span class="text-[10px] font-black uppercase tracking-[0.6em] mb-4 opacity-70">Es Store Official</span>
+                <h2 class="logo-font text-6xl md:text-8xl italic font-black mb-6">Style is Eternal</h2>
+                <button onclick="document.getElementById('products-grid').scrollIntoView({behavior:'smooth'})" class="mt-10 px-10 py-5 bg-white text-black rounded-full font-black uppercase text-[10px] tracking-widest active:scale-95 transition-all">Shop Collection</button>
             </div>
         </div>
 
-        <main id="page-home" class="flex-1 max-w-7xl mx-auto px-6 py-10 w-full">
-            <section class="hero-section">
-                <div class="hero-overlay"></div>
-                <div class="relative z-10 text-white w-full">
-                    <h2 class="text-6xl md:text-9xl font-black italic logo-font leading-[0.85] mb-6">URBAN<br>COLLECTIVE</h2>
-                    <div class="flex justify-between items-end">
-                        <p class="max-w-xs text-[9px] font-bold uppercase tracking-[0.3em] opacity-60">High-end streetwear for the bold and the restless. Limited availability.</p>
-                        <button class="bg-white text-black px-8 py-4 rounded-full font-black text-[10px] uppercase hover:scale-105 transition-all">View All</button>
+        <!-- Dashboard -->
+        <div id="admin-panel" class="hidden bg-zinc-950 text-white p-6 border-b-[12px] border-black">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="space-y-5">
+                    <h3 class="text-[10px] font-black uppercase text-zinc-500 tracking-[0.3em]">Publish Product</h3>
+                    <div class="bg-white/5 p-6 rounded-[2.5rem] border border-white/5 space-y-4">
+                        <input type="text" id="p-name" placeholder="اسم المنتج" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
+                        <input type="number" id="p-price" placeholder="السعر" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
+                        <input type="text" id="p-sizes" placeholder="المقاسات (S, M, L...)" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
+                        <div id="colors-input-list" class="space-y-2">
+                            <div class="flex gap-2">
+                                <input type="text" placeholder="رابط صورة اللون" class="flex-1 bg-white/5 p-3 rounded-xl text-xs c-img">
+                                <input type="color" class="w-12 h-12 rounded-xl c-hex cursor-pointer" value="#000000">
+                            </div>
+                        </div>
+                        <button onclick="window.addColorInput()" class="text-[10px] font-black text-blue-400 uppercase tracking-widest">+ Add Variation</button>
+                        <button id="add-product-btn" class="w-full bg-white text-black py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em]">Publish Now</button>
                     </div>
                 </div>
-            </section>
-            <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10"></div>
+                <div>
+                    <h3 class="text-[10px] font-black uppercase text-zinc-500 tracking-[0.3em] mb-6">Live Orders</h3>
+                    <div id="all-orders-admin" class="space-y-4 max-h-[600px] overflow-y-auto pr-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main id="page-home" class="flex-1 px-4 py-16 max-w-7xl mx-auto w-full">
+            <div class="mb-16 text-center">
+                <h3 class="logo-font text-5xl italic font-black mb-2 dark:text-white">The Collection</h3>
+                <div class="w-20 h-1 bg-black dark:bg-white mx-auto"></div>
+            </div>
+            <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-12"></div>
         </main>
 
-        <main id="page-orders" class="hidden flex-1 max-w-3xl mx-auto px-6 py-20 w-full text-right">
-            <h2 class="text-5xl font-black italic logo-font mb-16 text-center">My History</h2>
-            <div id="my-orders-list" class="space-y-6"></div>
+        <main id="page-orders" class="hidden flex-1 px-4 py-12 max-w-3xl mx-auto w-full">
+            <h2 class="text-4xl font-black italic logo-font mb-12 text-center dark:text-white">Order History</h2>
+            <div id="my-orders-list" class="space-y-4"></div>
         </main>
+
+        <!-- Navbar Mobile -->
+        <nav class="fixed bottom-0 left-0 right-0 z-[200] bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 flex justify-around py-4 md:hidden">
+            <button onclick="window.showPage('home')" id="tab-home" class="flex flex-col items-center gap-1 border-b-2 border-black dark:border-white pb-1">
+                <span class="text-[10px] font-black uppercase tracking-widest dark:text-white">Store</span>
+            </button>
+            <button onclick="window.showPage('orders')" id="tab-orders" class="flex flex-col items-center gap-1 opacity-40 pb-1">
+                <span class="text-[10px] font-black uppercase tracking-widest dark:text-white">My Orders</span>
+            </button>
+        </nav>
     </div>
 
-    <!-- نافذة المنتج (Modal) المطورة -->
-    <div id="product-modal" class="fixed inset-0 z-[1500] bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div id="product-modal-content" class="bg-white dark:bg-zinc-900 overflow-hidden relative flex flex-col md:flex-row shadow-2xl">
-            <button onclick="closeProductModal()" class="absolute top-6 right-6 z-20 bg-black text-white dark:bg-white dark:text-black w-10 h-10 rounded-full flex items-center justify-center text-xl hover:rotate-90 transition-transform">&times;</button>
+    <!-- Product Modal -->
+    <div id="product-modal" class="fixed inset-0 z-[2500] bg-black/70 backdrop-blur-xl hidden flex items-end md:items-center justify-center">
+        <div class="modal-content bg-white dark:bg-zinc-900 w-full max-w-5xl relative shadow-2xl overflow-hidden">
+            <button id="close-p-modal" class="absolute top-6 right-6 z-[2600] bg-white dark:bg-zinc-800 shadow-xl w-12 h-12 rounded-full text-3xl flex items-center justify-center font-light dark:text-white">&times;</button>
             
-            <div class="w-full md:w-1/2 h-[350px] md:h-auto overflow-hidden bg-gray-50 dark:bg-black/20">
-                <img id="modal-img" src="" class="w-full h-full object-cover">
+            <button id="share-p-btn" class="absolute top-6 left-6 z-[2600] bg-white dark:bg-zinc-800 shadow-xl w-12 h-12 rounded-full flex items-center justify-center dark:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke-width="2"/></svg>
+            </button>
+
+            <div class="w-full md:w-1/2 bg-gray-50 dark:bg-zinc-800 p-4 md:p-10 flex items-center justify-center">
+                <div class="w-full aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white shadow-2xl">
+                    <img id="modal-p-image" src="" class="w-full h-full object-cover">
+                </div>
             </div>
             
-            <div class="w-full md:w-1/2 p-8 md:p-12 text-right flex flex-col justify-center">
-                <span class="text-[9px] font-black uppercase text-gray-400 tracking-[0.3em] mb-2">New Arrival</span>
-                <h2 id="modal-name" class="logo-font text-3xl md:text-4xl font-black italic mb-2"></h2>
-                <p id="modal-price" class="text-xl font-black mb-8 opacity-70"></p>
-                
-                <div class="mb-6">
-                    <p class="text-[9px] font-black uppercase text-gray-400 mb-3 tracking-widest">Size</p>
-                    <div id="modal-sizes" class="flex flex-wrap gap-2"></div>
-                </div>
-                
+            <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center modal-scroll-area bg-white dark:bg-zinc-900">
                 <div class="mb-10">
-                    <p class="text-[9px] font-black uppercase text-gray-400 mb-3 tracking-widest">Color</p>
-                    <div id="modal-colors" class="flex flex-wrap gap-2"></div>
+                    <span class="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400">Es Store Premium</span>
+                    <h3 id="modal-p-name" class="text-4xl md:text-5xl font-black italic logo-font my-3 dark:text-white">Product</h3>
+                    <p id="modal-p-price" class="text-2xl font-black text-zinc-300 italic">0 EGP</p>
                 </div>
                 
-                <button id="modal-add-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl hover:scale-[0.98] transition-all">Add to Bag</button>
+                <div id="modal-colors-area" class="mb-8 hidden">
+                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-4 tracking-[0.2em]">Colors</p>
+                    <div id="modal-colors-list" class="flex flex-wrap gap-4"></div>
+                </div>
+                
+                <div id="modal-sizes-area" class="mb-10 hidden">
+                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-4 tracking-[0.2em]">Size</p>
+                    <div id="modal-sizes-list" class="flex flex-wrap gap-3"></div>
+                </div>
+                
+                <div class="space-y-4 pb-10">
+                    <div class="flex items-center justify-between bg-zinc-50 dark:bg-zinc-800 p-5 rounded-[2rem]">
+                        <div class="text-right leading-tight"><p class="text-[10px] font-black text-zinc-400 uppercase">Authentication</p><p class="text-[12px] font-black dark:text-white">أصلي 100%</p></div>
+                        <div id="qr-code" class="qr-container bg-white p-1 rounded-xl shadow-sm"></div>
+                    </div>
+                    <button id="checkout-direct-btn" class="w-full bg-black dark:bg-white dark:text-black text-white py-6 rounded-2xl font-black uppercase text-xs tracking-[0.2em]">Buy Now</button>
+                    <button id="modal-add-btn" class="w-full bg-white dark:bg-zinc-800 text-black dark:text-white border-2 border-zinc-100 dark:border-zinc-700 py-6 rounded-2xl font-black uppercase text-xs tracking-[0.2em]">Add to Bag</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- السلة (Drawer) -->
-    <div id="cart-drawer" class="fixed inset-0 z-[2000] bg-black/60 hidden">
-        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-sm bg-white dark:bg-zinc-900 p-10 flex flex-col translate-x-full transition-transform duration-500">
-            <div class="flex justify-between items-center mb-12">
-                <h2 class="logo-font text-3xl font-black italic">Bag</h2>
-                <button onclick="closeCart()" class="text-2xl hover:opacity-50">&times;</button>
-            </div>
-            <div id="cart-items" class="flex-1 overflow-y-auto space-y-6"></div>
-            <div class="mt-8 pt-8 border-t border-gray-100 dark:border-zinc-800 text-right">
-                <div class="flex justify-between text-lg font-black mb-8"><span>Total</span><span id="cart-total">0 EGP</span></div>
-                <button id="checkout-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-5 rounded-2xl font-black uppercase text-xs tracking-widest">Check Out</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- تأكيد الشحن -->
-    <div id="shipping-modal" class="fixed inset-0 z-[2500] bg-black/95 flex items-center justify-center p-6 hidden">
-        <div class="bg-white dark:bg-zinc-900 w-full max-w-md rounded-[3rem] p-10 text-right">
-            <h2 class="logo-font text-3xl font-black italic mb-8 text-center">Shipping Info</h2>
+    <!-- Shipping Modal -->
+    <div id="shipping-modal" class="fixed inset-0 z-[2600] bg-black/60 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[3.5rem] p-10 shadow-2xl">
+            <h2 class="text-3xl font-black italic logo-font mb-8 text-center dark:text-white">Shipping</h2>
             <div class="space-y-4">
-                <input type="text" id="ship-address" placeholder="Shipping Address">
-                <input type="tel" id="ship-phone" placeholder="WhatsApp Number">
-                <button id="final-confirm-btn" class="w-full bg-green-600 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-widest mt-4 shadow-xl">Confirm & WhatsApp</button>
-                <button onclick="document.getElementById('shipping-modal').classList.add('hidden')" class="w-full text-[9px] font-black uppercase text-gray-400 mt-2">Back to Bag</button>
+                <input type="text" id="ship-fullname" placeholder="الاسم الكامل" class="w-full p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 dark:text-white outline-none font-bold">
+                <input type="tel" id="ship-phone" placeholder="رقم الموبايل" class="w-full p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 dark:text-white outline-none font-bold">
+                <textarea id="ship-address" placeholder="العنوان" class="w-full p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 dark:text-white outline-none h-28 font-bold"></textarea>
+                <button id="save-shipping-btn" class="w-full bg-black dark:bg-white dark:text-black text-white py-6 rounded-2xl font-black uppercase tracking-widest">Place Order</button>
             </div>
+        </div>
+    </div>
+
+    <div id="cart-drawer" class="fixed inset-0 z-[2400] bg-black/40 hidden text-right">
+        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-sm bg-white dark:bg-zinc-900 p-10 flex flex-col transform translate-x-full transition-transform duration-500">
+            <h2 class="text-4xl font-black italic logo-font mb-10 dark:text-white">My Bag</h2>
+            <div id="cart-items" class="flex-1 overflow-y-auto space-y-5"></div>
+            <div class="pt-8 border-t dark:border-zinc-800 mt-6">
+                <div class="flex justify-between font-black text-2xl mb-8 italic dark:text-white"><span>Total</span><span id="cart-total">0 EGP</span></div>
+                <button id="checkout-cart-btn" class="w-full bg-black dark:bg-white dark:text-black text-white py-6 rounded-[2rem] font-black uppercase text-xs tracking-widest">Checkout</button>
+            </div>
+            <button id="cart-close" class="mt-6 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-center">Close Drawer</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, get, update, remove } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getDatabase, ref, set, onValue, push, remove, get } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRVGDn1M_zy5p7HGsNV0dLweMKRs_5JzA",
@@ -254,250 +240,200 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const rdb = getDatabase(app);
-        const DB_ROOT = "es_v_admin_pro_final";
-        const ADMIN_PHONE = "201017684705";
+        const DB_ROOT = "es_v_admin_pro"; 
 
-        let profile = null; let cart = []; let curSize = null; let curColor = null;
+        let profile = null; let cart = [];
+        let curImg = ""; let curSz = ""; let isDirect = false;
 
-        const showNotify = (msg) => Toastify({text: msg, duration: 3000, style: {background: "#000", color: "#fff", borderRadius: "12px", fontSize: "11px", fontWeight: "700"}}).showToast();
+        const showNotify = (msg, color="#000") => {
+            Toastify({ text: msg, duration: 3000, style: { background: color, borderRadius: "20px", fontWeight: "bold" } }).showToast();
+        };
 
-        function hideLogin() { 
-            const loginScreen = document.getElementById('login-screen');
-            const mainApp = document.getElementById('main-app');
-            if (loginScreen) loginScreen.classList.add('hidden'); 
-            if (mainApp) mainApp.classList.remove('hidden'); 
-        }
+        // --- Dark/Light Mode ---
+        const modeToggle = document.getElementById('mode-toggle');
+        const handleTheme = (theme) => {
+            if (theme === 'dark') { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); }
+            else { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); }
+        };
+        modeToggle.onclick = () => handleTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+        if (localStorage.getItem('theme') === 'dark') handleTheme('dark');
 
-        const session = localStorage.getItem('es_session');
-        if(session) {
-            onValue(ref(rdb, `${DB_ROOT}/users/${session}`), (snap) => {
-                profile = snap.val();
-                if(profile) { 
-                    hideLogin(); 
-                    const adminBtn = document.getElementById('admin-toggle-btn');
-                    if(profile.role === 'admin' && adminBtn) adminBtn.classList.remove('hidden'); 
-                    initStore(); 
-                }
-            });
-        }
-
-        const nextBtn = document.getElementById('next-btn');
-        if (nextBtn) {
-            nextBtn.onclick = () => { 
-                const nameInp = document.getElementById('user-name-input');
-                if(nameInp && nameInp.value.length > 2) { 
-                    document.getElementById('step-1').classList.add('hidden'); 
-                    document.getElementById('step-2').classList.remove('hidden'); 
-                } 
+        // --- Email Notification Logic ---
+        const sendAdminEmail = (orderData) => {
+            const itemsList = orderData.items.map(i => `${i.name} (مقاس: ${i.sz})`).join(', ');
+            const emailParams = {
+                to_name: "Admin",
+                from_name: orderData.shipping.name,
+                order_id: Math.random().toString(36).substr(2, 9).toUpperCase(),
+                customer_name: orderData.shipping.name,
+                customer_phone: orderData.shipping.phone,
+                customer_address: orderData.shipping.address,
+                order_items: itemsList,
+                total_price: orderData.total,
+                reply_to: "no-reply@es-store.com"
             };
-        }
 
-        const authBtn = document.getElementById('auth-final-btn');
-        if (authBtn) {
-            authBtn.onclick = async () => {
-                const n = document.getElementById('user-name-input').value.trim();
-                const p = document.getElementById('user-pass-input').value.trim();
-                if(!n || !p) return;
-                const snap = await get(ref(rdb, `${DB_ROOT}/users/${n}`));
-                if(snap.exists()) {
-                    if(snap.val().password === p) { localStorage.setItem('es_session', n); location.reload(); }
-                    else showNotify("Wrong Password");
-                } else {
-                    await set(ref(rdb, `${DB_ROOT}/users/${n}`), { name: n, password: p, role: 'user' });
-                    localStorage.setItem('es_session', n); location.reload();
-                }
-            };
-        }
+            emailjs.send("service_elshla", "template_es_store", emailParams)
+                .then(() => console.log("Email Sent Successfully!"))
+                .catch((err) => console.error("Email Error:", err));
+        };
 
-        function initStore() {
+        // --- Core Logic ---
+        onAuthStateChanged(auth, (u) => {
+            const saved = localStorage.getItem('es_session_v4');
+            if(saved) {
+                onValue(ref(rdb, `${DB_ROOT}/users/${saved}`), (s) => {
+                    profile = s.val();
+                    if(profile) {
+                        document.getElementById('login-screen').classList.add('hidden');
+                        document.getElementById('main-app').classList.remove('hidden');
+                        if(profile.role === 'admin') document.getElementById('admin-toggle-btn').classList.remove('hidden');
+                        loadData();
+                    }
+                });
+            }
+        });
+
+        function loadData() {
             onValue(ref(rdb, `${DB_ROOT}/products`), (snap) => {
-                const grid = document.getElementById('products-grid'); 
-                if (!grid) return;
-                grid.innerHTML = '';
+                const grid = document.getElementById('products-grid'); grid.innerHTML = '';
                 const data = snap.val(); if(!data) return;
                 Object.keys(data).reverse().forEach(id => {
                     const p = data[id];
+                    const cS = encodeURIComponent(JSON.stringify(p.colors || []));
+                    const sS = encodeURIComponent(JSON.stringify(p.sizes || []));
                     grid.innerHTML += `
-                    <div class="product-card" onclick='openProduct("${id}", ${JSON.stringify(p).replace(/'/g, "&apos;")})'>
-                        <div class="img-wrapper">
-                            <img src="${p.images?p.images[0]:p.image}">
-                            <div class="absolute bottom-4 right-4 bg-white/90 dark:bg-black/90 p-3 rounded-full shadow-lg">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="4"/></svg>
+                        <div class="group cursor-pointer" onclick="window.openProductModal('${id}','${p.name}',${p.price},'${p.image}','${cS}','${sS}')">
+                            <div class="aspect-[3/4] rounded-[2.5rem] overflow-hidden bg-gray-50 dark:bg-zinc-800 relative">
+                                <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                ${profile.role==='admin'?`<button onclick="event.stopPropagation(); window.delP('${id}')" class="absolute top-4 right-4 bg-red-600 text-white w-8 h-8 rounded-full">×</button>`:''}
                             </div>
-                        </div>
-                        <div class="py-4 px-1 flex justify-between items-start">
-                            <div>
-                                <h4 class="font-black text-[10px] uppercase tracking-wider opacity-80">${p.name}</h4>
-                                <p class="text-[9px] font-bold opacity-40 mt-1">${p.price} EGP</p>
+                            <div class="mt-5 px-2 text-center">
+                                <h4 class="font-black italic text-sm uppercase dark:text-white">${p.name}</h4>
+                                <p class="text-zinc-400 font-bold text-xs">${p.price} EGP</p>
                             </div>
-                        </div>
-                    </div>`;
+                        </div>`;
                 });
             });
 
             onValue(ref(rdb, `${DB_ROOT}/orders`), (snap) => {
-                const myDiv = document.getElementById('my-orders-list'); 
-                const allDiv = document.getElementById('all-orders-admin'); 
-                if (myDiv) myDiv.innerHTML = '';
-                if (allDiv) allDiv.innerHTML = '';
+                const my = document.getElementById('my-orders-list');
+                const adm = document.getElementById('all-orders-admin');
+                my.innerHTML = ''; adm.innerHTML = '';
                 const data = snap.val(); if(!data) return;
-                Object.keys(data).reverse().forEach(id => {
-                    const o = data[id];
-                    const adminActions = (profile && profile.role === 'admin') ? `<div class="mt-4 flex gap-3"><button onclick="adminAction('${id}', 'DELIVERED')" class="bg-black text-white dark:bg-white dark:text-black px-4 py-1.5 rounded-full text-[8px] font-black">COMPLETE</button><button onclick="deleteOrder('${id}')" class="text-red-500 text-[8px] font-black">DELETE</button></div>` : '';
-                    const html = `<div class="p-6 bg-gray-50 dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 text-right"><div class="flex justify-between items-center mb-3"><span class="text-[8px] font-black uppercase opacity-60">${o.status}</span><span class="text-[8px] opacity-30">${o.date}</span></div><h5 class="text-xs font-black">${o.userName}</h5><p class="text-[9px] opacity-40">${o.phone}</p><div class="text-sm font-black mt-3 logo-font">${o.total}</div>${adminActions}</div>`;
-                    if(profile && o.userName === profile.name && myDiv) myDiv.innerHTML += html;
-                    if(profile && profile.role === 'admin' && allDiv) allDiv.innerHTML += html;
+                Object.entries(data).reverse().forEach(([id, o]) => {
+                    if(o.userName === profile.name) {
+                        my.innerHTML += `<div class="bg-gray-50 dark:bg-zinc-800 p-6 rounded-[2rem] flex justify-between items-center text-right shadow-sm">
+                            <div><p class="font-black text-xs uppercase dark:text-white">${o.items.map(i=>i.name).join(', ')}</p><p class="text-[10px] text-zinc-400 mt-1 uppercase font-bold">${o.status}</p></div>
+                            <div class="font-black dark:text-white">${o.total}</div>
+                        </div>`;
+                    }
+                    if(profile.role==='admin') {
+                        adm.innerHTML += `<div class="bg-white/5 p-6 rounded-3xl text-[10px] space-y-3 border border-white/5">
+                            <div class="flex justify-between font-black uppercase text-zinc-400"><span>👤 ${o.userName}</span><span>${o.total}</span></div>
+                            <div class="flex gap-2">
+                                <button onclick="window.upStatus('${id}','حذف')" class="bg-red-900/40 px-4 py-2 rounded-xl text-red-400">×</button>
+                            </div>
+                        </div>`;
+                    }
                 });
             });
         }
 
-        window.adminAction = (id, status) => update(ref(rdb, `${DB_ROOT}/orders/${id}`), { status: status });
-        window.deleteOrder = (id) => confirm("Delete this order?") && remove(ref(rdb, `${DB_ROOT}/orders/${id}`));
+        window.openProductModal = (id, n, p, img, cJ, sJ) => {
+            const colors = cJ ? JSON.parse(decodeURIComponent(cJ)) : [];
+            const sizes = sJ ? JSON.parse(decodeURIComponent(sJ)) : [];
+            document.getElementById('modal-p-image').src = img;
+            document.getElementById('modal-p-name').innerText = n;
+            document.getElementById('modal-p-price').innerText = p + " EGP";
+            curImg = img; curSz = sizes[0] || "";
+            const qrEl = document.getElementById('qr-code'); qrEl.innerHTML = "";
+            new QRCode(qrEl, { text: n, width: 65, height: 65 });
 
-        window.openProduct = (id, p) => {
-            const modalName = document.getElementById('modal-name');
-            const modalPrice = document.getElementById('modal-price');
-            const modalImg = document.getElementById('modal-img');
-            if (modalName) modalName.innerText = p.name;
-            if (modalPrice) modalPrice.innerText = `${p.price} EGP`;
-            if (modalImg) modalImg.src = p.images ? p.images[0] : p.image;
-
-            const szBox = document.getElementById('modal-sizes'); 
-            if (szBox) {
-                szBox.innerHTML = ''; curSize = null;
-                (p.sizes || "S, M, L").split(',').forEach(s => {
-                    const b = document.createElement('button'); b.className = "btn-size-color"; b.innerText = s.trim();
-                    b.onclick = () => { document.querySelectorAll('#modal-sizes button').forEach(x=>x.classList.remove('bg-black','text-white','dark:bg-white','dark:text-black')); b.classList.add('bg-black','text-white','dark:bg-white','dark:text-black'); curSize = s.trim(); };
-                    szBox.appendChild(b);
+            const cl = document.getElementById('modal-colors-list'); cl.innerHTML = '';
+            if(colors.length) {
+                document.getElementById('modal-colors-area').classList.remove('hidden');
+                colors.forEach((c, idx) => {
+                    const dot = document.createElement('div'); dot.className = `color-dot ${idx===0?'active':''}`;
+                    dot.style.backgroundColor = c.hex;
+                    dot.onclick = () => { document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active')); dot.classList.add('active'); document.getElementById('modal-p-image').src = c.img; curImg = c.img; };
+                    cl.appendChild(dot);
                 });
-            }
+            } else document.getElementById('modal-colors-area').classList.add('hidden');
 
-            const clrBox = document.getElementById('modal-colors'); 
-            if (clrBox) {
-                clrBox.innerHTML = ''; curColor = null;
-                (p.colors || "Original").split(',').forEach(c => {
-                    const b = document.createElement('button'); b.className = "btn-size-color"; b.innerText = c.trim();
-                    b.onclick = () => { document.querySelectorAll('#modal-colors button').forEach(x=>x.classList.remove('bg-black','text-white','dark:bg-white','dark:text-black')); b.classList.add('bg-black','text-white','dark:bg-white','dark:text-black'); curColor = c.trim(); };
-                    clrBox.appendChild(b);
+            const sl = document.getElementById('modal-sizes-list'); sl.innerHTML = '';
+            if(sizes.length) {
+                document.getElementById('modal-sizes-area').classList.remove('hidden');
+                sizes.forEach((s, idx) => {
+                    const btn = document.createElement('button'); btn.className = `size-btn ${idx===0?'active':''}`; btn.innerText = s;
+                    btn.onclick = () => { document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); curSz = s; };
+                    sl.appendChild(btn);
                 });
-            }
-            const modal = document.getElementById('product-modal');
-            if (modal) modal.classList.remove('hidden');
+            } else document.getElementById('modal-sizes-area').classList.add('hidden');
+
+            document.getElementById('product-modal').classList.remove('hidden');
         };
 
-        window.closeProductModal = () => {
-            const modal = document.getElementById('product-modal');
-            if (modal) modal.classList.add('hidden');
+        // --- Button Handlers ---
+        document.getElementById('next-btn').onclick = () => { if(document.getElementById('user-name-input').value) { document.getElementById('step-1').classList.add('hidden'); document.getElementById('step-2').classList.remove('hidden'); } };
+        document.getElementById('auth-final-btn').onclick = async () => {
+            const n = document.getElementById('user-name-input').value.trim();
+            const p = document.getElementById('user-pass-input').value.trim();
+            const snap = await get(ref(rdb, `${DB_ROOT}/users/${n}`));
+            if(!snap.exists()) {
+                await signInAnonymously(auth);
+                await set(ref(rdb, `${DB_ROOT}/users/${n}`), { name: n, password: p, role: (n.toLowerCase()==='admin'?'admin':'user') });
+            } else if(snap.val().password !== p) return showNotify("⚠️ كلمة المرور خاطئة", "#f00");
+            localStorage.setItem('es_session_v4', n);
+            location.reload();
         };
 
-        window.closeCart = () => { 
-            const inner = document.getElementById('cart-inner');
-            const drawer = document.getElementById('cart-drawer');
-            if (inner) inner.classList.add('translate-x-full'); 
-            if (drawer) setTimeout(()=>drawer.classList.add('hidden'), 500); 
-        };
-        
-        const cartTrigger = document.getElementById('cart-trigger');
-        if (cartTrigger) {
-            cartTrigger.onclick = () => { 
-                const drawer = document.getElementById('cart-drawer');
-                const inner = document.getElementById('cart-inner');
-                if (drawer) drawer.classList.remove('hidden'); 
-                if (inner) setTimeout(()=>inner.classList.remove('translate-x-full'), 10); 
-            };
-        }
-
-        const addBtn = document.getElementById('modal-add-btn');
-        if (addBtn) {
-            addBtn.onclick = () => {
-                if(!curSize || !curColor) return showNotify("Select Size & Color First");
-                const name = document.getElementById('modal-name').innerText;
-                const price = document.getElementById('modal-price').innerText.replace(' EGP','');
-                cart.push({ name, price, size: curSize, color: curColor });
-                updateCart(); closeProductModal(); showNotify("Added to Bag");
-            };
-        }
-
-        function updateCart() {
-            const count = document.getElementById('cart-count');
-            const list = document.getElementById('cart-items');
-            const totalEl = document.getElementById('cart-total');
-            if (count) count.innerText = cart.length;
-            if (list) {
-                list.innerHTML = '';
-                let total = 0;
-                cart.forEach((item, idx) => { 
-                    total += parseInt(item.price); 
-                    list.innerHTML += `<div class="flex justify-between items-center p-5 bg-gray-50 dark:bg-zinc-800 rounded-2xl"><div class="text-right"><p class="font-black text-[9px] uppercase tracking-wider">${item.name}</p><p class="text-[8px] opacity-40">${item.size} / ${item.color}</p></div><button onclick="removeFromCart(${idx})" class="text-red-500 text-xs">✕</button></div>`; 
-                });
-                if (totalEl) totalEl.innerText = `${total} EGP`;
-            }
-        }
-        window.removeFromCart = (i) => { cart.splice(i, 1); updateCart(); };
-
-        const checkoutBtn = document.getElementById('checkout-btn');
-        if (checkoutBtn) {
-            checkoutBtn.onclick = () => {
-                const modal = document.getElementById('shipping-modal');
-                if (cart.length && modal) modal.classList.remove('hidden');
-                else if (!cart.length) showNotify("Your Bag is Empty");
-            };
-        }
-
-        const finalConfirmBtn = document.getElementById('final-confirm-btn');
-        if (finalConfirmBtn) {
-            finalConfirmBtn.onclick = async () => {
-                const addr = document.getElementById('ship-address').value;
-                const phone = document.getElementById('ship-phone').value;
-                if(!addr || !phone) return showNotify("Please fill shipping details");
-                
-                const total = document.getElementById('cart-total').innerText;
-                
-                try { emailjs.send("service_default", "template_default", { from_name: profile.name, phone, address: addr, items: cart.map(i=>i.name).join(','), total }); } catch(e){}
-                
-                await push(ref(rdb, `${DB_ROOT}/orders`), { userName: profile.name, items: cart, total, address: addr, phone, date: new Date().toLocaleDateString(), status: 'PENDING' });
-                
-                const message = encodeURIComponent(`طلب جديد من متجر Es Store ⚡\n\nالاسم: ${profile.name}\nالموبايل: ${phone}\nالعنوان: ${addr}\n\nالمنتجات:\n${cart.map(i => `• ${i.name} (${i.size}/${i.color})`).join('\n')}\n\nالإجمالي: ${total}`);
-                const waLink = `https://api.whatsapp.com/send?phone=${ADMIN_PHONE}&text=${message}`;
-
-                cart = []; updateCart();
-                document.getElementById('shipping-modal').classList.add('hidden');
-                closeCart();
-                
-                showNotify("Order Confirmed! Sending WhatsApp...");
-                setTimeout(() => { window.location.href = waLink; }, 800);
-            };
-        }
-
-        window.showPage = (p) => { 
-            document.querySelectorAll('main').forEach(m=>m.classList.add('hidden')); 
-            const page = document.getElementById(`page-${p}`);
-            if (page) page.classList.remove('hidden'); 
-            if(p === 'home') window.scrollTo({top:0, behavior:'smooth'});
+        document.getElementById('save-shipping-btn').onclick = async () => {
+            const sh = { name: document.getElementById('ship-fullname').value, phone: document.getElementById('ship-phone').value, address: document.getElementById('ship-address').value };
+            if(!sh.name || !sh.phone || !sh.address) return showNotify("⚠️ بيانات الشحن ناقصة", "#f00");
+            const items = isDirect ? [{ name: document.getElementById('modal-p-name').innerText, price: parseInt(document.getElementById('modal-p-price').innerText), sz: curSz, img: curImg, qty: 1 }] : cart;
+            const total = isDirect ? document.getElementById('modal-p-price').innerText : document.getElementById('cart-total').innerText;
+            const orderData = { userName: profile.name, items, total, shipping: sh, status: 'Processing', timestamp: Date.now() };
+            
+            await push(ref(rdb, `${DB_ROOT}/orders`), orderData);
+            sendAdminEmail(orderData); // إرسال الإيميل فوراً
+            
+            document.getElementById('shipping-modal').classList.add('hidden');
+            document.getElementById('product-modal').classList.add('hidden');
+            showNotify("🚀 تم إرسال طلبك وسيصلك إيميل تأكيد!", "#10b981");
         };
 
-        const modeBtn = document.getElementById('mode-toggle');
-        if (modeBtn) modeBtn.onclick = () => document.body.classList.toggle('dark-mode');
+        document.getElementById('add-product-btn').onclick = async () => {
+            const n = document.getElementById('p-name').value; const p = document.getElementById('p-price').value; 
+            const s = document.getElementById('p-sizes').value.split(',').map(x=>x.trim());
+            const cols = [];
+            document.querySelectorAll('#colors-input-list .flex').forEach(d => {
+                const img = d.querySelector('.c-img').value; const hex = d.querySelector('.c-hex').value;
+                if(img) cols.push({img, hex});
+            });
+            await push(ref(rdb, `${DB_ROOT}/products`), { name: n, price: p, image: cols[0].img, sizes: s, colors: cols, timestamp: Date.now() });
+            showNotify("✨ Published!"); location.reload();
+        };
 
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) logoutBtn.onclick = () => { localStorage.clear(); location.reload(); };
-
-        const adminToggle = document.getElementById('admin-toggle-btn');
-        if (adminToggle) adminToggle.onclick = () => document.getElementById('admin-panel').classList.toggle('hidden');
-        
-        const addProdBtn = document.getElementById('add-product-btn');
-        if (addProdBtn) {
-            addProdBtn.onclick = async () => {
-                const n = document.getElementById('p-name').value;
-                const p = document.getElementById('p-price').value;
-                const img = document.getElementById('p-images').value;
-                if(!n || !p || !img) return showNotify("Fill product data");
-                await push(ref(rdb, `${DB_ROOT}/products`), { name: n, price: p, images: [img], sizes: document.getElementById('p-sizes').value, colors: document.getElementById('p-colors').value });
-                showNotify("Collection Updated!");
-                document.getElementById('admin-panel').classList.add('hidden');
-            };
-        }
+        window.delP = (id) => { if(confirm("حذف؟")) remove(ref(rdb, `${DB_ROOT}/products/${id}`)); };
+        window.upStatus = (id, st) => { if(st==='حذف') remove(ref(rdb, `${DB_ROOT}/orders/${id}`)); };
+        window.showPage = (id) => {
+            document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
+            document.getElementById(`page-${id}`).classList.remove('hidden');
+            document.getElementById('hero-section').classList.toggle('hidden', id !== 'home');
+        };
+        document.getElementById('admin-toggle-btn').onclick = () => document.getElementById('admin-panel').classList.toggle('hidden');
+        document.getElementById('checkout-direct-btn').onclick = () => { isDirect = true; document.getElementById('shipping-modal').classList.remove('hidden'); };
+        document.getElementById('close-p-modal').onclick = () => document.getElementById('product-modal').classList.add('hidden');
+        document.getElementById('logout-btn').onclick = () => { localStorage.clear(); location.reload(); };
+        window.addColorInput = () => {
+            const container = document.getElementById('colors-input-list');
+            const div = document.createElement('div'); div.className = "flex gap-2 animate-in slide-in-from-right duration-300";
+            div.innerHTML = `<input type="text" placeholder="رابط" class="flex-1 bg-white/5 p-3 rounded-xl text-xs c-img"><input type="color" class="w-12 h-12 rounded-xl c-hex cursor-pointer"><button onclick="this.parentElement.remove()" class="text-red-500 font-black">×</button>`;
+            container.appendChild(div);
+        };
     </script>
 </body>
 </html>
