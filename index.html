@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Es Store | Youth & Casual</title>
+    <title>Es Store | Youth & Casual Elite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
@@ -14,239 +14,227 @@
     <style>
         :root { 
             --accent: #000; 
-            --glass: rgba(255, 255, 255, 0.85);
-            --glass-dark: rgba(18, 18, 18, 0.9);
+            --bg-light: #ffffff;
+            --bg-dark: #0a0a0a;
         }
         
         body { font-family: 'Cairo', sans-serif; transition: all 0.4s ease; overflow-x: hidden; scroll-behavior: smooth; }
-        body.light-mode { background: #ffffff; color: #000; }
-        body.dark-mode { background: #0a0a0a; color: #fff; }
+        body.light-mode { background: var(--bg-light); color: #000; }
+        body.dark-mode { background: var(--bg-dark); color: #fff; }
 
         .logo-font { font-family: 'Playfair Display', serif; }
 
-        /* شاشة الدخول - خلفية كاجوال */
+        /* شاشة الدخول */
         #login-screen { 
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
             position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
         }
-        #login-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        #login-screen.hidden { display: none; }
 
         .login-card {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 4rem; border-radius: 4rem; width: 95%; max-width: 480px; text-align: center;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem; border-radius: 3rem; width: 90%; max-width: 400px; text-align: center;
         }
 
-        /* الهيرو كونتنت - Streetwear Vibe */
+        /* الهيرو */
         .hero-section { 
-            position: relative;
-            height: 80vh;
-            border-radius: 4rem;
-            margin-bottom: 4rem;
-            overflow: hidden;
+            position: relative; height: 75vh; border-radius: 3.5rem; margin-bottom: 3rem; overflow: hidden;
             background: url('https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1974&auto=format&fit=crop') center/cover;
-            display: flex;
-            align-items: flex-end;
-            padding: 5rem;
+            display: flex; align-items: flex-end; padding: 4rem;
         }
+        .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 70%); }
 
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
-        }
+        /* تعديلات الخطوط */
+        .text-xs-custom { font-size: 0.65rem; letter-spacing: 0.1em; font-weight: 800; text-transform: uppercase; }
+        .text-sm-custom { font-size: 0.85rem; font-weight: 600; }
 
-        /* حقول الإدخال */
         input { 
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 20px 30px; border-radius: 24px; outline: none; transition: 0.4s;
-            font-weight: 600; width: 100%;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 16px 24px; border-radius: 18px; outline: none; transition: 0.3s;
+            font-size: 0.85rem; width: 100%;
         }
-        .light-mode #main-app input { background: #f8f8f8; border-color: #eee; color: #000; }
-        .dark-mode #main-app input { background: #1a1a1a; border-color: #2a2a2a; color: #fff; }
+        .light-mode #main-app input { background: #f9f9f9; border-color: #eee; color: #000; }
+        .dark-mode #main-app input { background: #151515; border-color: #222; color: #fff; }
         
-        input:focus { transform: scale(1.02); border-color: #666; }
+        .product-card { border-radius: 2rem; overflow: hidden; transition: 0.4s ease; cursor: pointer; }
+        .product-card:hover { transform: translateY(-8px); }
+        .img-wrapper { aspect-ratio: 1/1.25; overflow: hidden; border-radius: 2rem; background: #f4f4f4; position: relative; }
+        .img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s ease; }
+        .product-card:hover .img-wrapper img { transform: scale(1.08); }
 
-        /* الكروت */
-        .product-card { 
-            border-radius: 2.5rem; 
-            overflow: hidden;
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* نافذة المنتج المطورة */
+        #product-modal-content {
+            max-width: 1000px;
+            width: 95%;
+            height: auto;
+            max-height: 90vh;
+            border-radius: 3rem;
         }
-        .product-card:hover { transform: translateY(-15px); }
-        
-        .img-wrapper { 
-            aspect-ratio: 1/1.2;
-            overflow: hidden;
-            border-radius: 2.5rem;
-            background: #f0f0f0;
+        .btn-size-color {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: 0.2s;
         }
-        .img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: 1s ease; }
-        .product-card:hover .img-wrapper img { transform: scale(1.1); }
-
-        .badge-new { 
-            position: absolute; top: 1.5rem; left: 1.5rem; 
-            background: #fff; color: #000; padding: 6px 15px; 
-            border-radius: 50px; font-size: 10px; font-weight: 900; text-transform: uppercase;
-        }
+        .dark-mode .btn-size-color { border-color: #27272a; }
 
         .hidden { display: none !important; }
         
-        /* شريط التمرير العلوي */
-        .marquee-bar {
-            background: #000; color: #fff; padding: 12px 0; font-size: 11px; font-weight: 900;
-            white-space: nowrap; overflow: hidden;
-        }
-        .marquee-content { display: inline-block; animation: marquee 30s linear infinite; }
+        .marquee-bar { background: #000; color: #fff; padding: 10px 0; font-size: 10px; font-weight: 800; white-space: nowrap; overflow: hidden; }
+        .marquee-content { display: inline-block; animation: marquee 25s linear infinite; }
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* تحسين السكرول بار */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
     </style>
 </head>
 <body class="light-mode">
 
     <div class="marquee-bar">
         <div class="marquee-content">
-            ⚡ NEW ARRIVALS: THE STREETWEAR EDIT 2025 ⚡ FREE SHIPPING ON ORDERS OVER 1500 EGP ⚡ LIMITED DROP: GET YOUR LOOK NOW ⚡ ES STORE CASUAL VIBES ⚡
+            FREE SHIPPING ON ORDERS OVER 1500 EGP • LIMITED URBAN DROP 2025 • STREETWEAR ESSENTIALS • ES STORE CASUAL VIBES •
         </div>
     </div>
 
-    <!-- شاشة الدخول المحدثة -->
+    <!-- شاشة الدخول -->
     <div id="login-screen">
         <div class="login-card">
-            <h1 class="logo-font text-8xl italic font-black text-white mb-6">Es</h1>
-            <p class="text-white/60 text-xs font-black uppercase tracking-widest mb-10">Casual Wear Experience</p>
-            <div id="step-1" class="space-y-6">
-                <input type="text" id="user-name-input" placeholder="اسم المستخدم" class="text-center placeholder:text-white/30 text-white">
-                <button id="next-btn" class="w-full bg-white text-black py-6 rounded-3xl font-black uppercase tracking-tighter hover:bg-gray-200 transition-all">متابعة</button>
+            <h1 class="logo-font text-7xl italic font-black text-white mb-4">Es</h1>
+            <p class="text-white/40 text-[9px] font-black uppercase tracking-[0.4em] mb-8">Youth Collection</p>
+            <div id="step-1" class="space-y-4">
+                <input type="text" id="user-name-input" placeholder="Name" class="text-center text-white">
+                <button id="next-btn" class="w-full bg-white text-black py-4 rounded-2xl font-black uppercase text-xs hover:bg-gray-100 transition-all">Next</button>
             </div>
-            <div id="step-2" class="hidden space-y-6">
-                <input type="password" id="user-pass-input" placeholder="كلمة المرور" class="text-center placeholder:text-white/30 text-white">
-                <button id="auth-final-btn" class="w-full bg-white text-black py-6 rounded-3xl font-black uppercase tracking-tighter hover:bg-gray-200 transition-all">تسجيل الدخول</button>
+            <div id="step-2" class="hidden space-y-4">
+                <input type="password" id="user-pass-input" placeholder="Password" class="text-center text-white">
+                <button id="auth-final-btn" class="w-full bg-white text-black py-4 rounded-2xl font-black uppercase text-xs hover:bg-gray-100 transition-all">Enter</button>
             </div>
         </div>
     </div>
 
     <!-- التطبيق الرئيسي -->
     <div id="main-app" class="hidden min-h-screen flex flex-col">
-        <header class="sticky top-0 z-[100] bg-white/90 dark:bg-black/90 backdrop-blur-2xl">
-            <div class="max-w-7xl mx-auto px-6 h-24 flex justify-between items-center">
-                <div class="flex items-center gap-12">
-                    <span class="logo-font text-5xl font-black italic cursor-pointer" onclick="location.reload()">Es</span>
-                    <nav class="hidden md:flex gap-10">
-                        <span onclick="showPage('home')" class="text-[10px] uppercase font-black tracking-widest cursor-pointer hover:text-gray-400">Shop</span>
-                        <span onclick="showPage('orders')" class="text-[10px] uppercase font-black tracking-widest cursor-pointer hover:text-gray-400">My Orders</span>
+        <header class="sticky top-0 z-[100] bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-gray-100 dark:border-zinc-900">
+            <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+                <div class="flex items-center gap-10">
+                    <span class="logo-font text-4xl font-black italic cursor-pointer" onclick="showPage('home')">Es</span>
+                    <nav class="hidden md:flex gap-8">
+                        <span onclick="showPage('home')" class="text-xs-custom cursor-pointer hover:opacity-50 transition-opacity">Shop</span>
+                        <span onclick="showPage('orders')" class="text-xs-custom cursor-pointer hover:opacity-50 transition-opacity">My Orders</span>
                     </nav>
                 </div>
-                <div class="flex items-center gap-4">
-                    <button id="mode-toggle" class="p-4 rounded-full bg-gray-50 dark:bg-zinc-900 border border-gray-100 dark:border-zinc-800"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-width="3"/></svg></button>
-                    <button id="admin-toggle-btn" class="hidden bg-black text-white dark:bg-white dark:text-black px-8 py-3 rounded-full text-[10px] font-black uppercase shadow-xl">Admin</button>
-                    <button id="cart-trigger" class="relative p-4 rounded-full bg-gray-50 dark:bg-zinc-900">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2.5"/></svg>
-                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] w-6 h-6 rounded-full flex items-center justify-center font-black">0</span>
+                <div class="flex items-center gap-3">
+                    <button id="mode-toggle" class="p-3 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-900 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-width="2.5"/></svg></button>
+                    <button id="admin-toggle-btn" class="hidden bg-black text-white dark:bg-white dark:text-black px-5 py-2 rounded-full text-[9px] font-black uppercase">Admin</button>
+                    <button id="cart-trigger" class="relative p-3 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-900">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2"/></svg>
+                        <span id="cart-count" class="absolute top-1 right-1 bg-black text-white dark:bg-white dark:text-black text-[8px] w-5 h-5 rounded-full flex items-center justify-center font-black">0</span>
                     </button>
-                    <button id="logout-btn" class="p-2 opacity-20 hover:opacity-100"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2.5"/></svg></button>
+                    <!-- أضفت زر تسجيل الخروج ليكون موجوداً فعلياً في الواجهة لتجنب خطأ الـ null -->
+                    <button id="logout-btn" class="p-3 rounded-full hover:bg-red-100 dark:hover:bg-red-900 text-red-500 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
                 </div>
             </div>
         </header>
 
         <!-- لوحة التحكم -->
-        <div id="admin-panel" class="hidden p-12 bg-gray-50 dark:bg-zinc-950 border-b border-gray-200 dark:border-zinc-800">
-            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
-                <div class="space-y-5">
-                    <h3 class="text-[11px] font-black uppercase text-gray-400 tracking-widest mb-6">إضافة كولكشن جديد</h3>
-                    <input type="text" id="p-name" placeholder="اسم المنتج (مثال: Oversized Tee)">
-                    <input type="number" id="p-price" placeholder="السعر EGP">
-                    <input type="text" id="p-images" placeholder="رابط صورة المنتج">
-                    <input type="text" id="p-sizes" placeholder="المقاسات المتاحة" value="S, M, L, XL, XXL">
-                    <input type="text" id="p-colors" placeholder="الألوان (أسود, رمادي, كحلي)">
-                    <button id="add-product-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-6 rounded-3xl font-black uppercase shadow-2xl">تحديث المتجر</button>
+        <div id="admin-panel" class="hidden p-8 bg-gray-50 dark:bg-zinc-950 border-b border-gray-200 dark:border-zinc-900">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="space-y-4">
+                    <h3 class="text-xs-custom text-gray-400">Add New Drop</h3>
+                    <input type="text" id="p-name" placeholder="Product Name">
+                    <input type="number" id="p-price" placeholder="Price (EGP)">
+                    <input type="text" id="p-images" placeholder="Image URL">
+                    <input type="text" id="p-sizes" placeholder="Sizes (S, M, L...)" value="S, M, L, XL, XXL">
+                    <input type="text" id="p-colors" placeholder="Colors (Black, Grey...)">
+                    <button id="add-product-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-4 rounded-2xl font-black uppercase text-xs">Publish Drop</button>
                 </div>
-                <div class="space-y-6">
-                    <h3 class="text-[11px] font-black uppercase text-gray-400 tracking-widest">متابعة الطلبات الجارية</h3>
-                    <div id="all-orders-admin" class="max-h-[500px] overflow-y-auto space-y-4"></div>
+                <div class="space-y-4">
+                    <h3 class="text-xs-custom text-gray-400">Active Orders</h3>
+                    <div id="all-orders-admin" class="max-h-[400px] overflow-y-auto space-y-3"></div>
                 </div>
             </div>
         </div>
 
-        <main id="page-home" class="flex-1 max-w-7xl mx-auto px-6 py-12 w-full">
-            <!-- الهيرو الجديد -->
+        <main id="page-home" class="flex-1 max-w-7xl mx-auto px-6 py-10 w-full">
             <section class="hero-section">
                 <div class="hero-overlay"></div>
                 <div class="relative z-10 text-white w-full">
-                    <h2 class="text-7xl md:text-[12rem] font-black italic logo-font leading-[0.8] mb-8">STREET<br>VIBES</h2>
+                    <h2 class="text-6xl md:text-9xl font-black italic logo-font leading-[0.85] mb-6">URBAN<br>COLLECTIVE</h2>
                     <div class="flex justify-between items-end">
-                        <p class="max-w-xs text-[10px] font-bold uppercase tracking-[0.3em] opacity-70">The ultimate casual collection for 2025. Unmatched quality, bold styles.</p>
-                        <button class="bg-white text-black px-10 py-5 rounded-full font-black text-xs uppercase hover:scale-105 transition-all">Shop Collection</button>
+                        <p class="max-w-xs text-[9px] font-bold uppercase tracking-[0.3em] opacity-60">High-end streetwear for the bold and the restless. Limited availability.</p>
+                        <button class="bg-white text-black px-8 py-4 rounded-full font-black text-[10px] uppercase hover:scale-105 transition-all">View All</button>
                     </div>
                 </div>
             </section>
-
-            <div class="flex justify-between items-center mb-16 px-4">
-                <h3 class="text-3xl font-black italic logo-font">Trending Now</h3>
-                <div class="h-[1px] flex-1 mx-10 bg-gray-200 dark:bg-zinc-800"></div>
-            </div>
-
-            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10"></div>
+            <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10"></div>
         </main>
 
-        <main id="page-orders" class="hidden flex-1 max-w-4xl mx-auto px-6 py-24 w-full text-right">
-            <h2 class="text-6xl font-black italic logo-font mb-20 text-center">Your Drops</h2>
-            <div id="my-orders-list" class="space-y-8"></div>
+        <main id="page-orders" class="hidden flex-1 max-w-3xl mx-auto px-6 py-20 w-full text-right">
+            <h2 class="text-5xl font-black italic logo-font mb-16 text-center">My History</h2>
+            <div id="my-orders-list" class="space-y-6"></div>
         </main>
     </div>
 
-    <!-- نافذة المنتج -->
-    <div id="product-modal" class="fixed inset-0 z-[1500] bg-black/95 backdrop-blur-3xl hidden flex items-center justify-center p-6">
-        <div class="bg-white dark:bg-zinc-900 w-full max-w-6xl rounded-[4rem] overflow-hidden relative flex flex-col lg:flex-row shadow-2xl">
-            <button onclick="closeProductModal()" class="absolute top-10 right-10 z-10 bg-black text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl hover:rotate-90 transition-all duration-500">&times;</button>
-            <div class="w-full lg:w-3/5 h-[500px] lg:h-auto bg-gray-50 dark:bg-black/40 flex items-center justify-center">
+    <!-- نافذة المنتج (Modal) المطورة -->
+    <div id="product-modal" class="fixed inset-0 z-[1500] bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div id="product-modal-content" class="bg-white dark:bg-zinc-900 overflow-hidden relative flex flex-col md:flex-row shadow-2xl">
+            <button onclick="closeProductModal()" class="absolute top-6 right-6 z-20 bg-black text-white dark:bg-white dark:text-black w-10 h-10 rounded-full flex items-center justify-center text-xl hover:rotate-90 transition-transform">&times;</button>
+            
+            <div class="w-full md:w-1/2 h-[350px] md:h-auto overflow-hidden bg-gray-50 dark:bg-black/20">
                 <img id="modal-img" src="" class="w-full h-full object-cover">
             </div>
-            <div class="w-full lg:w-2/5 p-12 lg:p-20 text-right flex flex-col justify-center">
-                <span class="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4">Limited Edition</span>
-                <h2 id="modal-name" class="logo-font text-5xl font-black italic mb-4"></h2>
-                <p id="modal-price" class="text-3xl font-black mb-12"></p>
+            
+            <div class="w-full md:w-1/2 p-8 md:p-12 text-right flex flex-col justify-center">
+                <span class="text-[9px] font-black uppercase text-gray-400 tracking-[0.3em] mb-2">New Arrival</span>
+                <h2 id="modal-name" class="logo-font text-3xl md:text-4xl font-black italic mb-2"></h2>
+                <p id="modal-price" class="text-xl font-black mb-8 opacity-70"></p>
+                
+                <div class="mb-6">
+                    <p class="text-[9px] font-black uppercase text-gray-400 mb-3 tracking-widest">Size</p>
+                    <div id="modal-sizes" class="flex flex-wrap gap-2"></div>
+                </div>
+                
                 <div class="mb-10">
-                    <p class="text-[11px] font-black uppercase text-gray-400 mb-6">Select Size</p>
-                    <div id="modal-sizes" class="flex flex-wrap gap-3"></div>
+                    <p class="text-[9px] font-black uppercase text-gray-400 mb-3 tracking-widest">Color</p>
+                    <div id="modal-colors" class="flex flex-wrap gap-2"></div>
                 </div>
-                <div class="mb-14">
-                    <p class="text-[11px] font-black uppercase text-gray-400 mb-6">Color</p>
-                    <div id="modal-colors" class="flex flex-wrap gap-3"></div>
-                </div>
-                <button id="modal-add-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-7 rounded-3xl font-black uppercase text-sm tracking-widest shadow-2xl hover:scale-[0.98] transition-all">Add to Bag</button>
+                
+                <button id="modal-add-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl hover:scale-[0.98] transition-all">Add to Bag</button>
             </div>
         </div>
     </div>
 
-    <!-- السلة -->
-    <div id="cart-drawer" class="fixed inset-0 z-[2000] bg-black/80 hidden">
-        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-md bg-white dark:bg-zinc-900 p-12 flex flex-col translate-x-full transition-transform duration-700">
-            <div class="flex justify-between items-center mb-16">
-                <h2 class="logo-font text-4xl font-black italic">Bag</h2>
-                <button onclick="closeCart()" class="text-3xl font-light">&times;</button>
+    <!-- السلة (Drawer) -->
+    <div id="cart-drawer" class="fixed inset-0 z-[2000] bg-black/60 hidden">
+        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-sm bg-white dark:bg-zinc-900 p-10 flex flex-col translate-x-full transition-transform duration-500">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="logo-font text-3xl font-black italic">Bag</h2>
+                <button onclick="closeCart()" class="text-2xl hover:opacity-50">&times;</button>
             </div>
-            <div id="cart-items" class="flex-1 overflow-y-auto space-y-8"></div>
-            <div class="mt-10 pt-10 border-t border-gray-100 dark:border-zinc-800 text-right">
-                <div class="flex justify-between text-2xl font-black mb-10"><span>Total</span><span id="cart-total">0 EGP</span></div>
-                <button id="checkout-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-7 rounded-3xl font-black uppercase tracking-widest shadow-xl">Complete Order</button>
+            <div id="cart-items" class="flex-1 overflow-y-auto space-y-6"></div>
+            <div class="mt-8 pt-8 border-t border-gray-100 dark:border-zinc-800 text-right">
+                <div class="flex justify-between text-lg font-black mb-8"><span>Total</span><span id="cart-total">0 EGP</span></div>
+                <button id="checkout-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-5 rounded-2xl font-black uppercase text-xs tracking-widest">Check Out</button>
             </div>
         </div>
     </div>
 
     <!-- تأكيد الشحن -->
-    <div id="shipping-modal" class="fixed inset-0 z-[2500] bg-black/98 flex items-center justify-center p-6 hidden">
-        <div class="bg-white dark:bg-zinc-900 w-full max-w-2xl rounded-[5rem] p-16 text-right">
-            <h2 class="logo-font text-5xl font-black italic mb-12 text-center">Delivery</h2>
-            <div class="space-y-6">
-                <input type="text" id="ship-address" placeholder="العنوان (المدينة، الحي، الشارع)">
-                <input type="tel" id="ship-phone" placeholder="رقم الموبايل">
-                <button id="final-confirm-btn" class="w-full bg-black text-white dark:bg-white dark:text-black py-7 rounded-3xl font-black uppercase tracking-widest mt-8 shadow-2xl">Confirm Drop</button>
-                <p class="text-center text-[10px] text-gray-400 mt-6 font-bold uppercase">Cash on delivery available only</p>
+    <div id="shipping-modal" class="fixed inset-0 z-[2500] bg-black/95 flex items-center justify-center p-6 hidden">
+        <div class="bg-white dark:bg-zinc-900 w-full max-w-md rounded-[3rem] p-10 text-right">
+            <h2 class="logo-font text-3xl font-black italic mb-8 text-center">Shipping Info</h2>
+            <div class="space-y-4">
+                <input type="text" id="ship-address" placeholder="Shipping Address">
+                <input type="tel" id="ship-phone" placeholder="WhatsApp Number">
+                <button id="final-confirm-btn" class="w-full bg-green-600 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-widest mt-4 shadow-xl">Confirm & WhatsApp</button>
+                <button onclick="document.getElementById('shipping-modal').classList.add('hidden')" class="w-full text-[9px] font-black uppercase text-gray-400 mt-2">Back to Bag</button>
             </div>
         </div>
     </div>
@@ -268,184 +256,248 @@
         const app = initializeApp(firebaseConfig);
         const rdb = getDatabase(app);
         const DB_ROOT = "es_v_admin_pro_final";
+        const ADMIN_PHONE = "201017684705";
 
         let profile = null; let cart = []; let curSize = null; let curColor = null;
 
-        const showNotify = (msg) => Toastify({text: msg, duration: 4000, gravity: "bottom", position: "center", style: {background: "#000", color: "#fff", borderRadius: "50px", padding: "15px 30px", fontSize: "12px", fontWeight: "900"}}).showToast();
+        const showNotify = (msg) => Toastify({text: msg, duration: 3000, style: {background: "#000", color: "#fff", borderRadius: "12px", fontSize: "11px", fontWeight: "700"}}).showToast();
 
-        // نظام إخفاء الشاشة المضمون
-        function hideLogin() {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
+        function hideLogin() { 
+            const loginScreen = document.getElementById('login-screen');
+            const mainApp = document.getElementById('main-app');
+            if (loginScreen) loginScreen.classList.add('hidden'); 
+            if (mainApp) mainApp.classList.remove('hidden'); 
         }
 
-        // التحقق من الجلسة
         const session = localStorage.getItem('es_session');
         if(session) {
             onValue(ref(rdb, `${DB_ROOT}/users/${session}`), (snap) => {
                 profile = snap.val();
-                if(profile) {
-                    hideLogin();
-                    if(profile.role === 'admin') document.getElementById('admin-toggle-btn').classList.remove('hidden');
-                    initStore();
+                if(profile) { 
+                    hideLogin(); 
+                    const adminBtn = document.getElementById('admin-toggle-btn');
+                    if(profile.role === 'admin' && adminBtn) adminBtn.classList.remove('hidden'); 
+                    initStore(); 
                 }
             });
         }
 
-        document.getElementById('next-btn').onclick = () => {
-            if(document.getElementById('user-name-input').value.length > 2) {
-                document.getElementById('step-1').classList.add('hidden');
-                document.getElementById('step-2').classList.remove('hidden');
-            } else showNotify("WRITE YOUR NAME");
-        };
+        const nextBtn = document.getElementById('next-btn');
+        if (nextBtn) {
+            nextBtn.onclick = () => { 
+                const nameInp = document.getElementById('user-name-input');
+                if(nameInp && nameInp.value.length > 2) { 
+                    document.getElementById('step-1').classList.add('hidden'); 
+                    document.getElementById('step-2').classList.remove('hidden'); 
+                } 
+            };
+        }
 
-        document.getElementById('auth-final-btn').onclick = async () => {
-            const n = document.getElementById('user-name-input').value.trim();
-            const p = document.getElementById('user-pass-input').value.trim();
-            if(!n || !p) return showNotify("COMPLETE DATA");
-            const snap = await get(ref(rdb, `${DB_ROOT}/users/${n}`));
-            if(snap.exists()) {
-                if(snap.val().password === p) { 
-                    localStorage.setItem('es_session', n); 
-                    location.reload(); 
-                } else showNotify("WRONG PASSWORD");
-            } else {
-                await set(ref(rdb, `${DB_ROOT}/users/${n}`), { name: n, password: p, role: 'user' });
-                localStorage.setItem('es_session', n); 
-                location.reload();
-            }
-        };
+        const authBtn = document.getElementById('auth-final-btn');
+        if (authBtn) {
+            authBtn.onclick = async () => {
+                const n = document.getElementById('user-name-input').value.trim();
+                const p = document.getElementById('user-pass-input').value.trim();
+                if(!n || !p) return;
+                const snap = await get(ref(rdb, `${DB_ROOT}/users/${n}`));
+                if(snap.exists()) {
+                    if(snap.val().password === p) { localStorage.setItem('es_session', n); location.reload(); }
+                    else showNotify("Wrong Password");
+                } else {
+                    await set(ref(rdb, `${DB_ROOT}/users/${n}`), { name: n, password: p, role: 'user' });
+                    localStorage.setItem('es_session', n); location.reload();
+                }
+            };
+        }
 
         function initStore() {
             onValue(ref(rdb, `${DB_ROOT}/products`), (snap) => {
-                const grid = document.getElementById('products-grid'); grid.innerHTML = '';
+                const grid = document.getElementById('products-grid'); 
+                if (!grid) return;
+                grid.innerHTML = '';
                 const data = snap.val(); if(!data) return;
                 Object.keys(data).reverse().forEach(id => {
                     const p = data[id];
                     grid.innerHTML += `
-                    <div class="product-card relative" onclick='openProduct("${id}", ${JSON.stringify(p)})'>
-                        <span class="badge-new">Drop</span>
-                        <div class="img-wrapper"><img src="${p.images?p.images[0]:p.image}"></div>
-                        <div class="py-6 px-2 flex justify-between items-start">
-                            <div>
-                                <h4 class="font-black text-[11px] uppercase tracking-wider">${p.name}</h4>
-                                <p class="text-gray-400 font-bold text-[10px] mt-1">${p.price} EGP</p>
+                    <div class="product-card" onclick='openProduct("${id}", ${JSON.stringify(p).replace(/'/g, "&apos;")})'>
+                        <div class="img-wrapper">
+                            <img src="${p.images?p.images[0]:p.image}">
+                            <div class="absolute bottom-4 right-4 bg-white/90 dark:bg-black/90 p-3 rounded-full shadow-lg">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="4"/></svg>
                             </div>
-                            <button class="bg-black text-white w-8 h-8 rounded-full flex items-center justify-center">+</button>
+                        </div>
+                        <div class="py-4 px-1 flex justify-between items-start">
+                            <div>
+                                <h4 class="font-black text-[10px] uppercase tracking-wider opacity-80">${p.name}</h4>
+                                <p class="text-[9px] font-bold opacity-40 mt-1">${p.price} EGP</p>
+                            </div>
                         </div>
                     </div>`;
                 });
             });
 
             onValue(ref(rdb, `${DB_ROOT}/orders`), (snap) => {
-                const myDiv = document.getElementById('my-orders-list'); myDiv.innerHTML = '';
-                const allDiv = document.getElementById('all-orders-admin'); allDiv.innerHTML = '';
+                const myDiv = document.getElementById('my-orders-list'); 
+                const allDiv = document.getElementById('all-orders-admin'); 
+                if (myDiv) myDiv.innerHTML = '';
+                if (allDiv) allDiv.innerHTML = '';
                 const data = snap.val(); if(!data) return;
                 Object.keys(data).reverse().forEach(id => {
                     const o = data[id];
-                    const adminActions = profile.role === 'admin' ? `
-                        <div class="mt-6 pt-6 border-t flex gap-4">
-                            <button onclick="adminAction('${id}', 'DELIVERED')" class="bg-black text-white px-6 py-2 rounded-full text-[9px] font-black">DELIVERED</button>
-                            <button onclick="deleteOrder('${id}')" class="bg-red-50 text-red-500 px-6 py-2 rounded-full text-[9px] font-black border border-red-500/20">REMOVE</button>
-                        </div>` : '';
-                    const html = `
-                    <div class="p-10 bg-gray-50 dark:bg-zinc-900 rounded-[3rem] border border-gray-100 dark:border-zinc-800 text-right">
-                        <div class="flex justify-between items-center mb-6">
-                            <span class="px-5 py-2 bg-black text-white rounded-full text-[9px] font-black uppercase tracking-widest">${o.status}</span>
-                            <span class="text-[10px] text-gray-400 font-black">${o.date}</span>
-                        </div>
-                        <h5 class="text-xl font-black mb-2">${o.userName} • ${o.phone}</h5>
-                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">${o.address}</p>
-                        <div class="mt-6 space-y-2">
-                            ${o.items.map(i => `<div class="text-[11px] font-black opacity-40">→ ${i.name} / ${i.size} / ${i.color}</div>`).join('')}
-                        </div>
-                        <div class="text-3xl font-black mt-8 italic logo-font">${o.total}</div>
-                        ${adminActions}
-                    </div>`;
-                    if(o.userName === profile.name) myDiv.innerHTML += html;
-                    if(profile.role === 'admin') allDiv.innerHTML += html;
+                    const adminActions = (profile && profile.role === 'admin') ? `<div class="mt-4 flex gap-3"><button onclick="adminAction('${id}', 'DELIVERED')" class="bg-black text-white dark:bg-white dark:text-black px-4 py-1.5 rounded-full text-[8px] font-black">COMPLETE</button><button onclick="deleteOrder('${id}')" class="text-red-500 text-[8px] font-black">DELETE</button></div>` : '';
+                    const html = `<div class="p-6 bg-gray-50 dark:bg-zinc-900 rounded-3xl border border-gray-100 dark:border-zinc-800 text-right"><div class="flex justify-between items-center mb-3"><span class="text-[8px] font-black uppercase opacity-60">${o.status}</span><span class="text-[8px] opacity-30">${o.date}</span></div><h5 class="text-xs font-black">${o.userName}</h5><p class="text-[9px] opacity-40">${o.phone}</p><div class="text-sm font-black mt-3 logo-font">${o.total}</div>${adminActions}</div>`;
+                    if(profile && o.userName === profile.name && myDiv) myDiv.innerHTML += html;
+                    if(profile && profile.role === 'admin' && allDiv) allDiv.innerHTML += html;
                 });
             });
         }
 
         window.adminAction = (id, status) => update(ref(rdb, `${DB_ROOT}/orders/${id}`), { status: status });
-        window.deleteOrder = (id) => confirm("Confirm Delete?") && remove(ref(rdb, `${DB_ROOT}/orders/${id}`));
+        window.deleteOrder = (id) => confirm("Delete this order?") && remove(ref(rdb, `${DB_ROOT}/orders/${id}`));
 
         window.openProduct = (id, p) => {
-            document.getElementById('modal-name').innerText = p.name;
-            document.getElementById('modal-price').innerText = `${p.price} EGP`;
-            document.getElementById('modal-img').src = p.images ? p.images[0] : p.image;
-            const szBox = document.getElementById('modal-sizes'); szBox.innerHTML = ''; curSize = null;
-            (p.sizes || "S, M, L").split(',').forEach(s => {
-                const b = document.createElement('button'); b.className = "px-8 py-3 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[10px] font-black uppercase tracking-widest"; b.innerText = s.trim();
-                b.onclick = () => { document.querySelectorAll('#modal-sizes button').forEach(x=>x.classList.remove('bg-black','text-white','dark:bg-white','dark:text-black')); b.classList.add('bg-black','text-white','dark:bg-white','dark:text-black'); curSize = s.trim(); };
-                szBox.appendChild(b);
-            });
-            const clrBox = document.getElementById('modal-colors'); clrBox.innerHTML = ''; curColor = null;
-            (p.colors || "Original").split(',').forEach(c => {
-                const b = document.createElement('button'); b.className = "px-8 py-3 border border-gray-200 dark:border-zinc-700 rounded-2xl text-[10px] font-black uppercase tracking-widest"; b.innerText = c.trim();
-                b.onclick = () => { document.querySelectorAll('#modal-colors button').forEach(x=>x.classList.remove('bg-black','text-white','dark:bg-white','dark:text-black')); b.classList.add('bg-black','text-white','dark:bg-white','dark:text-black'); curColor = c.trim(); };
-                clrBox.appendChild(b);
-            });
-            document.getElementById('product-modal').classList.remove('hidden');
+            const modalName = document.getElementById('modal-name');
+            const modalPrice = document.getElementById('modal-price');
+            const modalImg = document.getElementById('modal-img');
+            if (modalName) modalName.innerText = p.name;
+            if (modalPrice) modalPrice.innerText = `${p.price} EGP`;
+            if (modalImg) modalImg.src = p.images ? p.images[0] : p.image;
+
+            const szBox = document.getElementById('modal-sizes'); 
+            if (szBox) {
+                szBox.innerHTML = ''; curSize = null;
+                (p.sizes || "S, M, L").split(',').forEach(s => {
+                    const b = document.createElement('button'); b.className = "btn-size-color"; b.innerText = s.trim();
+                    b.onclick = () => { document.querySelectorAll('#modal-sizes button').forEach(x=>x.classList.remove('bg-black','text-white','dark:bg-white','dark:text-black')); b.classList.add('bg-black','text-white','dark:bg-white','dark:text-black'); curSize = s.trim(); };
+                    szBox.appendChild(b);
+                });
+            }
+
+            const clrBox = document.getElementById('modal-colors'); 
+            if (clrBox) {
+                clrBox.innerHTML = ''; curColor = null;
+                (p.colors || "Original").split(',').forEach(c => {
+                    const b = document.createElement('button'); b.className = "btn-size-color"; b.innerText = c.trim();
+                    b.onclick = () => { document.querySelectorAll('#modal-colors button').forEach(x=>x.classList.remove('bg-black','text-white','dark:bg-white','dark:text-black')); b.classList.add('bg-black','text-white','dark:bg-white','dark:text-black'); curColor = c.trim(); };
+                    clrBox.appendChild(b);
+                });
+            }
+            const modal = document.getElementById('product-modal');
+            if (modal) modal.classList.remove('hidden');
         };
 
-        window.closeProductModal = () => document.getElementById('product-modal').classList.add('hidden');
-        window.closeCart = () => { document.getElementById('cart-inner').classList.add('translate-x-full'); setTimeout(()=>document.getElementById('cart-drawer').classList.add('hidden'), 700); };
+        window.closeProductModal = () => {
+            const modal = document.getElementById('product-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        window.closeCart = () => { 
+            const inner = document.getElementById('cart-inner');
+            const drawer = document.getElementById('cart-drawer');
+            if (inner) inner.classList.add('translate-x-full'); 
+            if (drawer) setTimeout(()=>drawer.classList.add('hidden'), 500); 
+        };
         
-        document.getElementById('cart-trigger').onclick = () => { 
-            document.getElementById('cart-drawer').classList.remove('hidden'); 
-            setTimeout(()=>document.getElementById('cart-inner').classList.remove('translate-x-full'), 10);
-        };
+        const cartTrigger = document.getElementById('cart-trigger');
+        if (cartTrigger) {
+            cartTrigger.onclick = () => { 
+                const drawer = document.getElementById('cart-drawer');
+                const inner = document.getElementById('cart-inner');
+                if (drawer) drawer.classList.remove('hidden'); 
+                if (inner) setTimeout(()=>inner.classList.remove('translate-x-full'), 10); 
+            };
+        }
 
-        document.getElementById('modal-add-btn').onclick = () => {
-            if(!curSize || !curColor) return showNotify("SELECT SIZE & COLOR");
-            cart.push({ name: document.getElementById('modal-name').innerText, price: document.getElementById('modal-price').innerText.replace(' EGP',''), size: curSize, color: curColor });
-            updateCart(); closeProductModal(); showNotify("ADDED TO BAG");
-        };
+        const addBtn = document.getElementById('modal-add-btn');
+        if (addBtn) {
+            addBtn.onclick = () => {
+                if(!curSize || !curColor) return showNotify("Select Size & Color First");
+                const name = document.getElementById('modal-name').innerText;
+                const price = document.getElementById('modal-price').innerText.replace(' EGP','');
+                cart.push({ name, price, size: curSize, color: curColor });
+                updateCart(); closeProductModal(); showNotify("Added to Bag");
+            };
+        }
 
         function updateCart() {
-            document.getElementById('cart-count').innerText = cart.length;
-            const list = document.getElementById('cart-items'); list.innerHTML = '';
-            let total = 0;
-            cart.forEach((item, idx) => {
-                total += parseInt(item.price);
-                list.innerHTML += `<div class="flex justify-between items-center p-6 bg-gray-50 dark:bg-zinc-800 rounded-3xl"><div class="text-right"><p class="font-black text-[11px] uppercase">${item.name}</p><p class="text-[9px] text-gray-400 font-bold">${item.size} / ${item.color}</p></div><button onclick="removeFromCart(${idx})" class="text-red-500 font-black">✕</button></div>`;
-            });
-            document.getElementById('cart-total').innerText = `${total} EGP`;
+            const count = document.getElementById('cart-count');
+            const list = document.getElementById('cart-items');
+            const totalEl = document.getElementById('cart-total');
+            if (count) count.innerText = cart.length;
+            if (list) {
+                list.innerHTML = '';
+                let total = 0;
+                cart.forEach((item, idx) => { 
+                    total += parseInt(item.price); 
+                    list.innerHTML += `<div class="flex justify-between items-center p-5 bg-gray-50 dark:bg-zinc-800 rounded-2xl"><div class="text-right"><p class="font-black text-[9px] uppercase tracking-wider">${item.name}</p><p class="text-[8px] opacity-40">${item.size} / ${item.color}</p></div><button onclick="removeFromCart(${idx})" class="text-red-500 text-xs">✕</button></div>`; 
+                });
+                if (totalEl) totalEl.innerText = `${total} EGP`;
+            }
         }
         window.removeFromCart = (i) => { cart.splice(i, 1); updateCart(); };
 
-        document.getElementById('checkout-btn').onclick = () => cart.length ? document.getElementById('shipping-modal').classList.remove('hidden') : showNotify("BAG IS EMPTY");
+        const checkoutBtn = document.getElementById('checkout-btn');
+        if (checkoutBtn) {
+            checkoutBtn.onclick = () => {
+                const modal = document.getElementById('shipping-modal');
+                if (cart.length && modal) modal.classList.remove('hidden');
+                else if (!cart.length) showNotify("Your Bag is Empty");
+            };
+        }
 
-        document.getElementById('final-confirm-btn').onclick = async () => {
-            const addr = document.getElementById('ship-address').value;
-            const phone = document.getElementById('ship-phone').value;
-            if(!addr || !phone) return showNotify("COMPLETE SHIPPING INFO");
-            const total = document.getElementById('cart-total').innerText;
-            
-            emailjs.send("service_default", "template_default", { from_name: profile.name, phone, address: addr, items: cart.map(i=>i.name).join(','), total });
-            await push(ref(rdb, `${DB_ROOT}/orders`), { userName: profile.name, items: cart, total, address: addr, phone, date: new Date().toLocaleDateString(), status: 'PENDING' });
-            
-            cart = []; updateCart();
-            document.getElementById('shipping-modal').classList.add('hidden');
-            closeCart();
-            showNotify("DROP CONFIRMED! CHECK ORDERS.");
+        const finalConfirmBtn = document.getElementById('final-confirm-btn');
+        if (finalConfirmBtn) {
+            finalConfirmBtn.onclick = async () => {
+                const addr = document.getElementById('ship-address').value;
+                const phone = document.getElementById('ship-phone').value;
+                if(!addr || !phone) return showNotify("Please fill shipping details");
+                
+                const total = document.getElementById('cart-total').innerText;
+                
+                try { emailjs.send("service_default", "template_default", { from_name: profile.name, phone, address: addr, items: cart.map(i=>i.name).join(','), total }); } catch(e){}
+                
+                await push(ref(rdb, `${DB_ROOT}/orders`), { userName: profile.name, items: cart, total, address: addr, phone, date: new Date().toLocaleDateString(), status: 'PENDING' });
+                
+                const message = encodeURIComponent(`طلب جديد من متجر Es Store ⚡\n\nالاسم: ${profile.name}\nالموبايل: ${phone}\nالعنوان: ${addr}\n\nالمنتجات:\n${cart.map(i => `• ${i.name} (${i.size}/${i.color})`).join('\n')}\n\nالإجمالي: ${total}`);
+                const waLink = `https://api.whatsapp.com/send?phone=${ADMIN_PHONE}&text=${message}`;
+
+                cart = []; updateCart();
+                document.getElementById('shipping-modal').classList.add('hidden');
+                closeCart();
+                
+                showNotify("Order Confirmed! Sending WhatsApp...");
+                setTimeout(() => { window.location.href = waLink; }, 800);
+            };
+        }
+
+        window.showPage = (p) => { 
+            document.querySelectorAll('main').forEach(m=>m.classList.add('hidden')); 
+            const page = document.getElementById(`page-${p}`);
+            if (page) page.classList.remove('hidden'); 
+            if(p === 'home') window.scrollTo({top:0, behavior:'smooth'});
         };
 
-        window.showPage = (p) => { document.querySelectorAll('main').forEach(m=>m.classList.add('hidden')); document.getElementById(`page-${p}`).classList.remove('hidden'); };
-        document.getElementById('mode-toggle').onclick = () => document.body.classList.toggle('dark-mode');
-        document.getElementById('logout-btn').onclick = () => { localStorage.clear(); location.reload(); };
-        document.getElementById('admin-toggle-btn').onclick = () => document.getElementById('admin-panel').classList.toggle('hidden');
+        const modeBtn = document.getElementById('mode-toggle');
+        if (modeBtn) modeBtn.onclick = () => document.body.classList.toggle('dark-mode');
+
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) logoutBtn.onclick = () => { localStorage.clear(); location.reload(); };
+
+        const adminToggle = document.getElementById('admin-toggle-btn');
+        if (adminToggle) adminToggle.onclick = () => document.getElementById('admin-panel').classList.toggle('hidden');
         
-        document.getElementById('add-product-btn').onclick = async () => {
-            const n = document.getElementById('p-name').value;
-            const p = document.getElementById('p-price').value;
-            const img = document.getElementById('p-images').value;
-            if(!n || !p || !img) return showNotify("COMPLETE PRODUCT DATA");
-            await push(ref(rdb, `${DB_ROOT}/products`), { name: n, price: p, images: [img], sizes: document.getElementById('p-sizes').value, colors: document.getElementById('p-colors').value });
-            showNotify("COLLECTION UPDATED!");
-        };
+        const addProdBtn = document.getElementById('add-product-btn');
+        if (addProdBtn) {
+            addProdBtn.onclick = async () => {
+                const n = document.getElementById('p-name').value;
+                const p = document.getElementById('p-price').value;
+                const img = document.getElementById('p-images').value;
+                if(!n || !p || !img) return showNotify("Fill product data");
+                await push(ref(rdb, `${DB_ROOT}/products`), { name: n, price: p, images: [img], sizes: document.getElementById('p-sizes').value, colors: document.getElementById('p-colors').value });
+                showNotify("Collection Updated!");
+                document.getElementById('admin-panel').classList.add('hidden');
+            };
+        }
     </script>
 </body>
 </html>
