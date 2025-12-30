@@ -13,6 +13,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
+          // تم استخدام مفتاحك العام
           emailjs.init("Ru84Q4SIEnQZjbfL4");
        })();
     </script>
@@ -64,7 +65,7 @@
             </div>
             <div id="step-2" class="hidden space-y-4">
                 <input type="password" id="user-pass-input" placeholder="كلمة المرور" class="w-full p-5 rounded-2xl bg-white/10 text-center outline-none border border-white/5">
-                <button id="auth-final-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest active:scale-95">دخول</button>
+                <button id="auth-final-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest active:scale-95">دخول / تسجيل</button>
             </div>
         </div>
     </div>
@@ -239,6 +240,7 @@
         let profile = null; 
         let cart = [];
         let curImg = ""; let curSz = ""; let isDirect = false; let currentProductId = "";
+        let curHex = "Default"; // متغير لحفظ اللون المختار
 
         const showNotify = (msg, color="#000") => {
             Toastify({ text: msg, duration: 3000, gravity: "top", position: "center", style: { background: color, borderRadius: "20px", fontWeight: "bold" } }).showToast();
@@ -287,7 +289,7 @@
             e.target.value = val;
         });
 
-        // --- Dashboard Toggle Fix ---
+        // --- Dashboard Toggle ---
         document.getElementById('admin-toggle-btn').onclick = () => {
             const panel = document.getElementById('admin-panel');
             panel.classList.toggle('hidden');
@@ -360,7 +362,7 @@
                     if(profile && profile.role==='admin') {
                         adm.innerHTML += `<div class="bg-white/5 p-6 rounded-3xl text-[10px] space-y-3 border border-white/5">
                             <div class="flex justify-between font-black uppercase text-zinc-400"><span>👤 ${o.userName}</span><span>${o.total}</span></div>
-                            <div class="text-white/60">📦 ${o.items.map(i=>i.name).join(' + ')}</div>
+                            <div class="text-white/60">📦 ${o.items.map(i=>`${i.name} (لون: ${i.hex||'Default'})`).join(' + ')}</div>
                             <div class="text-zinc-500 italic">📞 ${o.shipping.phone} | 📍 ${o.shipping.address}</div>
                             <div class="flex flex-wrap gap-2 pt-2">
                                 <button onclick="window.processOrder('${id}', 'تم التوصيل', '${encodeURIComponent(JSON.stringify(o))}')" class="bg-green-600/20 text-green-400 border border-green-600/30 px-4 py-2 rounded-xl font-bold">توصيل ✅</button>
@@ -380,6 +382,7 @@
             document.getElementById('modal-p-name').innerText = n;
             document.getElementById('modal-p-price').innerText = p + " EGP";
             curImg = img; curSz = sizes[0] || "";
+            curHex = "Original"; 
 
             const cl = document.getElementById('modal-colors-list'); cl.innerHTML = '';
             if(colors.length) {
@@ -387,11 +390,13 @@
                 colors.forEach((c, idx) => {
                     const dot = document.createElement('div'); dot.className = `color-dot ${idx===0?'active':''}`;
                     dot.style.backgroundColor = c.hex;
+                    if(idx===0) curHex = c.hex;
                     dot.onclick = () => { 
                         document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active')); 
                         dot.classList.add('active'); 
                         document.getElementById('modal-p-image').src = c.img; 
                         curImg = c.img; 
+                        curHex = c.hex;
                     };
                     cl.appendChild(dot);
                 });
@@ -415,28 +420,6 @@
             pushState('product', { product: id });
         };
 
-        // --- Share & QR ---
-        document.getElementById('share-product-btn').onclick = async () => {
-            const url = `${window.location.origin}${window.location.pathname}?product=${currentProductId}`;
-            if (navigator.share) {
-                navigator.share({ title: document.getElementById('modal-p-name').innerText, url: url });
-            } else {
-                const dummy = document.createElement('input');
-                document.body.appendChild(dummy);
-                dummy.value = url; dummy.select();
-                document.execCommand('copy');
-                document.body.removeChild(dummy);
-                showNotify("تم نسخ الرابط للمشاركة 🔗");
-            }
-        };
-
-        document.getElementById('qr-trigger-btn').onclick = () => {
-            const url = `${window.location.origin}${window.location.pathname}?product=${currentProductId}`;
-            document.getElementById('qrcode').innerHTML = '';
-            new QRCode(document.getElementById("qrcode"), { text: url, width: 200, height: 200 });
-            document.getElementById('qr-modal').classList.remove('hidden');
-        };
-
         // --- Order & EmailJS ---
         document.getElementById('save-shipping-btn').onclick = async () => {
             const sh = { 
@@ -446,22 +429,23 @@
             };
             if(!sh.name || !sh.phone || !sh.address) return showNotify("⚠️ أكمل البيانات","red");
             
-            const items = isDirect ? [{ name: document.getElementById('modal-p-name').innerText, price: parseInt(document.getElementById('modal-p-price').innerText), sz: curSz, img: curImg, qty: 1 }] : cart;
+            const items = isDirect ? [{ name: document.getElementById('modal-p-name').innerText, price: parseInt(document.getElementById('modal-p-price').innerText), sz: curSz, img: curImg, hex: curHex, qty: 1 }] : cart;
             const total = items.reduce((acc, i) => acc + (i.price * i.qty), 0);
             
             // 1. Save to Firebase
             await push(ref(rdb, `${DB_ROOT}/orders`), { userName: profile.name, items, total, shipping: sh, status: 'Processing', timestamp: Date.now() });
             
-            // 2. Send Email via EmailJS (Modified to include size and color link)
-            const itemsList = items.map(i => `• ${i.name} (${i.sz}) x${i.qty} \n  اللون: ${i.img}`).join('\n\n');
-            emailjs.send("service_xsnqf3u", "template_y8p7d8o", {
+            // 2. Send Email via EmailJS
+            // تم استخدام Service ID و Template ID التي أرسلتها
+            const itemsList = items.map(i => `${i.name} (مقاس: ${i.sz}) (لون: ${i.hex}) x${i.qty}`).join('\n');
+            emailjs.send("service_7d06dp2", "template_lqgeexy", {
                 from_name: profile.name,
                 customer_name: sh.name,
                 customer_phone: sh.phone,
                 customer_address: sh.address,
                 order_items: itemsList,
                 total_price: total + " EGP",
-                message: `طلب جديد من ${profile.name}`
+                message: `طلب جديد - اللون المختار: ${curHex}`
             }).catch(err => console.error("Email Error:", err));
 
             if(!isDirect) cart = [];
@@ -480,7 +464,7 @@
                 total += item.price * item.qty;
                 container.innerHTML += `<div class="flex items-center gap-4 bg-gray-50 dark:bg-zinc-800 p-4 rounded-3xl">
                     <img src="${item.img}" class="w-16 h-16 object-cover rounded-xl shadow-md">
-                    <div class="flex-1"><h4 class="font-black text-[10px] dark:text-white uppercase">${item.name}</h4><p class="text-[9px] text-zinc-400 font-bold">${item.sz} | ${item.price} EGP</p></div>
+                    <div class="flex-1"><h4 class="font-black text-[10px] dark:text-white uppercase">${item.name}</h4><p class="text-[9px] text-zinc-400 font-bold">${item.sz} | ${item.hex} | ${item.price} EGP</p></div>
                     <div class="flex items-center gap-2">
                         <button onclick="window.changeQty(${idx},-1)" class="w-6 h-6 bg-white dark:bg-zinc-700 rounded-lg text-xs font-black dark:text-white shadow-sm">-</button>
                         <span class="text-xs font-black dark:text-white w-4 text-center">${item.qty}</span>
@@ -505,7 +489,7 @@
         document.getElementById('modal-add-btn').onclick = () => {
             const name = document.getElementById('modal-p-name').innerText;
             const price = parseInt(document.getElementById('modal-p-price').innerText);
-            cart.push({ name, price, sz: curSz, img: curImg, qty: 1 });
+            cart.push({ name, price, sz: curSz, img: curImg, hex: curHex, qty: 1 });
             flyToCartAnimation(curImg);
             window.updateCartUI();
             showNotify("✅ تمت الإضافة للسلة");
@@ -572,15 +556,31 @@
             }
         };
 
+        // نظام تسجيل الدخول (Sign in / Sign up) تلقائي
         document.getElementById('auth-final-btn').onclick = async () => {
             const n = document.getElementById('user-name-input').value.trim();
             const p = document.getElementById('user-pass-input').value.trim();
+            if(!n || !p) return showNotify("⚠️ أكمل البيانات", "#f00");
+
             const snap = await get(ref(rdb, `${DB_ROOT}/users/${n}`));
+            
             if(!snap.exists()) {
+                // تسجيل جديد
                 await signInAnonymously(auth);
-                await set(ref(rdb, `${DB_ROOT}/users/${n}`), { name: n, password: p, role: (n.toLowerCase()==='admin'?'admin':'user') });
-            } else if(snap.val().password !== p) return showNotify("⚠️ كلمة المرور خاطئة", "#f00");
-            localStorage.setItem('es_session_v4', n); location.reload();
+                await set(ref(rdb, `${DB_ROOT}/users/${n}`), { 
+                    name: n, 
+                    password: p, 
+                    role: (n.toLowerCase()==='admin' ? 'admin' : 'user') 
+                });
+                showNotify("✨ تم إنشاء حسابك بنجاح", "#10b981");
+            } else {
+                // دخول
+                if(snap.val().password !== p) return showNotify("⚠️ كلمة المرور خاطئة", "#f00");
+                showNotify("👋 مرحباً بعودتك", "#10b981");
+            }
+            
+            localStorage.setItem('es_session_v4', n); 
+            setTimeout(() => location.reload(), 1000);
         };
 
         document.getElementById('logout-btn').onclick = () => { localStorage.clear(); location.reload(); };
