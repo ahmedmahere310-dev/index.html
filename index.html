@@ -14,7 +14,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
        (function(){
-          emailjs.init("Ru84Q4SIEnQZjbfL4"); // مفتاحك الخاص
+          emailjs.init("Ru84Q4SIEnQZjbfL4");
        })();
     </script>
     
@@ -30,50 +30,49 @@
     </script>
 
     <style>
-        body { font-family: 'Cairo', sans-serif; transition: background-color 0.5s ease, color 0.5s ease; }
+        body { font-family: 'Cairo', sans-serif; transition: background-color 0.5s ease, color 0.5s ease; overflow-x: hidden; }
         .logo-font { font-family: 'Playfair Display', serif; }
         .dark body { background-color: #0a0a0a; color: #fff; }
-        .modal-content { 
-            max-height: 90vh; 
-            overflow-y: auto !important; 
-            border-radius: 2.5rem 2.5rem 0 0 !important; 
-            display: flex;
-            flex-direction: column;
-        }
+        .modal-content { max-height: 90vh; overflow-y: auto !important; border-radius: 2.5rem 2.5rem 0 0 !important; }
         @media (min-width: 768px) { 
-            .modal-content { border-radius: 4rem !important; max-height: 85vh; flex-direction: row; overflow-y: hidden !important; } 
-            .modal-scroll-area { overflow-y: auto; max-height: 85vh; }
+            .modal-content { border-radius: 4rem !important; max-height: 85vh; display: flex; flex-direction: row; overflow-y: hidden !important; } 
+            .modal-scroll-area { overflow-y: auto; max-height: 85vh; width: 50%; }
         }
         .hero-gradient { background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8)); }
-        .color-dot { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #eee; position: relative; cursor: pointer; }
-        .color-dot.active { border-color: #000; transform: scale(1.1); }
+        .color-dot { width: 35px; height: 35px; border-radius: 50%; border: 2px solid #eee; cursor: pointer; transition: 0.3s; }
+        .color-dot.active { border-color: #000; transform: scale(1.15); }
         .dark .color-dot.active { border-color: #fff; }
         .size-btn { padding: 12px 20px; border-radius: 12px; border: 1.5px solid #eee; font-weight: 800; transition: 0.3s; }
         .size-btn.active { background: #000; color: #fff; border-color: #000; }
         .dark .size-btn.active { background: #fff; color: #000; border-color: #fff; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
+        
+        .fly-item {
+            position: fixed; z-index: 5000; width: 80px; height: 80px; object-fit: cover; border-radius: 20px;
+            pointer-events: none; transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        #qrcode img { margin: 0 auto; border-radius: 1rem; border: 8px solid white; }
     </style>
 </head>
 <body class="light">
 
-    <!-- شاشة الدخول -->
+    <!-- Login -->
     <div id="login-screen" class="fixed inset-0 z-[3000] flex items-center justify-center p-6 text-white text-center" style="background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'); background-size: cover;">
-        <div class="w-full max-w-sm bg-white/5 backdrop-blur-2xl p-10 rounded-[3.5rem] border border-white/10 text-center">
+        <div class="w-full max-w-sm bg-white/5 backdrop-blur-2xl p-10 rounded-[3.5rem] border border-white/10">
             <h1 class="logo-font text-8xl italic font-black mb-10">Es</h1>
             <div id="step-1" class="space-y-4">
-                <input type="text" id="user-name-input" placeholder="اسم المستخدم" class="w-full p-5 rounded-2xl bg-white/10 text-center outline-none border border-white/5 focus:border-white/30">
-                <button id="next-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest active:scale-95">متابعة</button>
+                <input type="text" id="user-name-input" placeholder="اسم المستخدم" class="w-full p-5 rounded-2xl bg-white/10 text-center outline-none border border-white/5">
+                <button id="next-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest active:scale-95 transition-all">متابعة</button>
             </div>
             <div id="step-2" class="hidden space-y-4">
-                <input type="password" id="user-pass-input" placeholder="كلمة المرور" class="w-full p-5 rounded-2xl bg-white/10 text-center outline-none border border-white/5 focus:border-white/30">
+                <input type="password" id="user-pass-input" placeholder="كلمة المرور" class="w-full p-5 rounded-2xl bg-white/10 text-center outline-none border border-white/5">
                 <button id="auth-final-btn" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest active:scale-95">دخول</button>
             </div>
         </div>
     </div>
 
     <div id="main-app" class="hidden min-h-screen flex flex-col">
-        <!-- الهيدر -->
+        <!-- Header -->
         <header class="sticky top-0 z-[100] bg-white/80 dark:bg-zinc-950/80 backdrop-blur-lg border-b border-gray-100 dark:border-zinc-900">
             <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center w-full">
                 <div class="flex items-center gap-4">
@@ -85,7 +84,7 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <button id="admin-toggle-btn" class="hidden bg-black dark:bg-white dark:text-black text-white px-5 py-2.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em]">Dashboard</button>
-                    <button id="cart-trigger" class="relative p-3 bg-gray-50 dark:bg-zinc-800 rounded-full">
+                    <button id="cart-trigger" class="relative p-3 bg-gray-50 dark:bg-zinc-800 rounded-full transition-all">
                         <svg class="w-5 h-5 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-width="2"/></svg>
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-black">0</span>
                     </button>
@@ -94,8 +93,30 @@
             </div>
         </header>
 
-        <!-- Hero Section -->
-        <div id="hero-section" class="relative h-[70vh] w-full overflow-hidden">
+        <!-- Admin Panel -->
+        <div id="admin-panel" class="hidden bg-zinc-950 text-white p-6 border-b-[12px] border-black overflow-hidden animate-in slide-in-from-top duration-500">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 text-right">
+                <div class="space-y-5">
+                    <h3 class="text-[10px] font-black uppercase text-zinc-500 tracking-[0.3em]">إضافة منتج جديد</h3>
+                    <div class="bg-white/5 p-6 rounded-[2.5rem] border border-white/5 space-y-4 text-right">
+                        <input type="text" id="p-name" placeholder="اسم المنتج" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
+                        <input type="number" id="p-price" placeholder="السعر" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
+                        <input type="text" id="p-sizes" placeholder="المقاسات (S, M, L...)" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
+                        <input type="text" id="p-main-img" placeholder="رابط الصورة الرئيسية" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
+                        <div id="colors-input-list" class="space-y-2"></div>
+                        <button id="add-color-input-btn" class="text-[10px] font-black text-blue-400 uppercase tracking-widest">+ إضافة لون وصورة فرعية</button>
+                        <button id="add-product-btn" class="w-full bg-white text-black py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em]">نشر المنتج</button>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-[10px] font-black uppercase text-zinc-500 tracking-[0.3em] mb-6 text-right">طلبات الزبائن</h3>
+                    <div id="all-orders-admin" class="space-y-4 max-h-[600px] overflow-y-auto pr-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <div id="hero-section" class="relative h-[60vh] w-full overflow-hidden">
             <img src="https://images.pexels.com/photos/1884581/pexels-photo-1884581.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" class="absolute inset-0 w-full h-full object-cover">
             <div class="absolute inset-0 hero-gradient flex flex-col items-center justify-center text-white text-center px-6">
                 <span class="text-[10px] font-black uppercase tracking-[0.6em] mb-4 opacity-70">Es Store Official</span>
@@ -104,38 +125,7 @@
             </div>
         </div>
 
-        <!-- Dashboard -->
-        <div id="admin-panel" class="hidden bg-zinc-950 text-white p-6 border-b-[12px] border-black">
-            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div class="space-y-5">
-                    <h3 class="text-[10px] font-black uppercase text-zinc-500 tracking-[0.3em]">Publish Product</h3>
-                    <div class="bg-white/5 p-6 rounded-[2.5rem] border border-white/5 space-y-4">
-                        <input type="text" id="p-name" placeholder="اسم المنتج" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
-                        <input type="number" id="p-price" placeholder="السعر" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
-                        <input type="text" id="p-sizes" placeholder="المقاسات (S, M, L...)" class="w-full bg-white/5 p-4 rounded-2xl outline-none">
-                        <div id="colors-input-list" class="space-y-2">
-                            <div class="flex gap-2">
-                                <input type="text" placeholder="رابط صورة اللون" class="flex-1 bg-white/5 p-3 rounded-xl text-xs c-img">
-                                <input type="color" class="w-12 h-12 rounded-xl c-hex cursor-pointer" value="#000000">
-                            </div>
-                        </div>
-                        <button onclick="window.addColorInput()" class="text-[10px] font-black text-blue-400 uppercase tracking-widest">+ Add Variation</button>
-                        <button id="add-product-btn" class="w-full bg-white text-black py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em]">Publish Now</button>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-[10px] font-black uppercase text-zinc-500 tracking-[0.3em] mb-6">Live Orders</h3>
-                    <div id="all-orders-admin" class="space-y-4 max-h-[600px] overflow-y-auto pr-3 text-right"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Content -->
         <main id="page-home" class="flex-1 px-4 py-16 max-w-7xl mx-auto w-full">
-            <div class="mb-16 text-center">
-                <h3 class="logo-font text-5xl italic font-black mb-2 dark:text-white">The Collection</h3>
-                <div class="w-20 h-1 bg-black dark:bg-white mx-auto"></div>
-            </div>
             <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-12"></div>
         </main>
 
@@ -144,13 +134,13 @@
             <div id="my-orders-list" class="space-y-4"></div>
         </main>
 
-        <!-- Navbar Mobile -->
+        <!-- Mobile Nav -->
         <nav class="fixed bottom-0 left-0 right-0 z-[200] bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 flex justify-around py-4 md:hidden">
-            <button onclick="window.showPage('home')" id="tab-home" class="flex flex-col items-center gap-1 border-b-2 border-black dark:border-white pb-1">
+            <button onclick="window.showPage('home')" id="tab-home" class="nav-tab flex flex-col items-center gap-1 border-b-2 border-black dark:border-white pb-1">
                 <span class="text-[10px] font-black uppercase tracking-widest dark:text-white">Store</span>
             </button>
-            <button onclick="window.showPage('orders')" id="tab-orders" class="flex flex-col items-center gap-1 opacity-40 pb-1">
-                <span class="text-[10px] font-black uppercase tracking-widest dark:text-white">My Orders</span>
+            <button onclick="window.showPage('orders')" id="tab-orders" class="nav-tab flex flex-col items-center gap-1 opacity-40 pb-1">
+                <span class="text-[10px] font-black uppercase tracking-widest dark:text-white">Orders</span>
             </button>
         </nav>
     </div>
@@ -158,69 +148,81 @@
     <!-- Product Modal -->
     <div id="product-modal" class="fixed inset-0 z-[2500] bg-black/70 backdrop-blur-xl hidden flex items-end md:items-center justify-center">
         <div class="modal-content bg-white dark:bg-zinc-900 w-full max-w-5xl relative shadow-2xl overflow-hidden">
-            <button id="close-p-modal" class="absolute top-6 right-6 z-[2600] bg-white dark:bg-zinc-800 shadow-xl w-12 h-12 rounded-full text-3xl flex items-center justify-center font-light dark:text-white">&times;</button>
+            <button id="close-p-modal" class="absolute top-6 right-6 z-[2600] bg-white/80 dark:bg-zinc-800 shadow-xl w-10 h-10 rounded-full text-2xl flex items-center justify-center font-light dark:text-white transition-transform active:scale-90">&times;</button>
             
-            <button id="share-p-btn" class="absolute top-6 left-6 z-[2600] bg-white dark:bg-zinc-800 shadow-xl w-12 h-12 rounded-full flex items-center justify-center dark:text-white">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke-width="2"/></svg>
-            </button>
-
-            <div class="w-full md:w-1/2 bg-gray-50 dark:bg-zinc-800 p-4 md:p-10 flex items-center justify-center">
-                <div class="w-full aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white shadow-2xl">
+            <div class="w-full md:w-1/2 bg-gray-50 dark:bg-zinc-800 p-4 md:p-10 flex flex-col items-center justify-center">
+                <div class="w-full aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white shadow-2xl relative">
                     <img id="modal-p-image" src="" class="w-full h-full object-cover">
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button id="share-product-btn" class="flex items-center gap-2 bg-white dark:bg-zinc-700 px-6 py-3 rounded-2xl shadow-sm font-black text-[10px] uppercase tracking-widest dark:text-white">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke-width="2"/></svg>
+                        مشاركة
+                    </button>
+                    <button id="qr-trigger-btn" class="flex items-center justify-center bg-white dark:bg-zinc-700 w-12 h-12 rounded-2xl shadow-sm dark:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" stroke-width="2"/></svg>
+                    </button>
                 </div>
             </div>
             
-            <div class="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center modal-scroll-area bg-white dark:bg-zinc-900">
-                <div class="mb-10 text-right">
+            <div class="modal-scroll-area p-8 md:p-16 flex flex-col justify-center bg-white dark:bg-zinc-900 text-right">
+                <div class="mb-10">
                     <span class="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400">Es Store Premium</span>
                     <h3 id="modal-p-name" class="text-4xl md:text-5xl font-black italic logo-font my-3 dark:text-white">Product</h3>
                     <p id="modal-p-price" class="text-2xl font-black text-zinc-300 italic">0 EGP</p>
                 </div>
                 
                 <div id="modal-colors-area" class="mb-8 hidden">
-                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-4 tracking-[0.2em] text-right">Colors</p>
+                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-4 tracking-[0.2em]">الألوان المتاحة</p>
                     <div id="modal-colors-list" class="flex flex-wrap gap-4 justify-end"></div>
                 </div>
                 
                 <div id="modal-sizes-area" class="mb-10 hidden">
-                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-4 tracking-[0.2em] text-right">Size</p>
+                    <p class="text-[10px] font-black uppercase text-zinc-400 mb-4 tracking-[0.2em]">المقاس</p>
                     <div id="modal-sizes-list" class="flex flex-wrap gap-3 justify-end"></div>
                 </div>
                 
-                <div class="space-y-4 pb-10">
-                    <div class="flex items-center justify-between bg-zinc-50 dark:bg-zinc-800 p-5 rounded-[2rem]">
-                        <div class="text-right leading-tight"><p class="text-[10px] font-black text-zinc-400 uppercase">Authentication</p><p class="text-[12px] font-black dark:text-white">أصلي 100%</p></div>
-                        <div id="qr-code" class="qr-container bg-white p-1 rounded-xl shadow-sm"></div>
-                    </div>
-                    <button id="checkout-direct-btn" class="w-full bg-black dark:bg-white dark:text-black text-white py-6 rounded-2xl font-black uppercase text-xs tracking-[0.2em]">Buy Now</button>
-                    <button id="modal-add-btn" class="w-full bg-white dark:bg-zinc-800 text-black dark:text-white border-2 border-zinc-100 dark:border-zinc-700 py-6 rounded-2xl font-black uppercase text-xs tracking-[0.2em]">Add to Bag</button>
+                <div class="space-y-4">
+                    <button id="checkout-direct-btn" class="w-full bg-black dark:bg-white dark:text-black text-white py-6 rounded-2xl font-black uppercase text-xs tracking-[0.2em]">شراء الآن</button>
+                    <button id="modal-add-btn" class="w-full bg-white dark:bg-zinc-800 text-black dark:text-white border-2 border-zinc-100 dark:border-zinc-700 py-6 rounded-2xl font-black uppercase text-xs tracking-[0.2em]">إضافة للسلة</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- QR Modal -->
+    <div id="qr-modal" class="fixed inset-0 z-[2700] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-6" onclick="this.classList.add('hidden')">
+        <div class="bg-white dark:bg-zinc-900 p-8 rounded-[3rem] text-center space-y-6 max-w-xs w-full" onclick="event.stopPropagation()">
+            <h4 class="font-black italic text-xl dark:text-white">QR Code</h4>
+            <div id="qrcode" class="flex justify-center p-4 bg-white rounded-2xl"></div>
+            <p class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">امسح الكود لفتح المنتج مباشرة</p>
         </div>
     </div>
 
     <!-- Shipping Modal -->
     <div id="shipping-modal" class="fixed inset-0 z-[2600] bg-black/60 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[3.5rem] p-10 shadow-2xl">
-            <h2 class="text-3xl font-black italic logo-font mb-8 text-center dark:text-white">Shipping</h2>
+        <div class="bg-white dark:bg-zinc-900 w-full max-w-sm rounded-[3.5rem] p-10 shadow-2xl text-right">
+            <h2 class="text-3xl font-black italic logo-font mb-8 text-center dark:text-white">إتمام الطلب</h2>
             <div class="space-y-4">
                 <input type="text" id="ship-fullname" placeholder="الاسم الكامل" class="w-full p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 dark:text-white outline-none font-bold">
-                <input type="tel" id="ship-phone" placeholder="رقم الموبايل" class="w-full p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 dark:text-white outline-none font-bold">
-                <textarea id="ship-address" placeholder="العنوان" class="w-full p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 dark:text-white outline-none h-28 font-bold"></textarea>
-                <button id="save-shipping-btn" class="w-full bg-black dark:bg-white dark:text-black text-white py-6 rounded-2xl font-black uppercase tracking-widest">Place Order</button>
+                <input type="tel" id="ship-phone" placeholder="رقم الموبايل" class="w-full p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 dark:text-white outline-none font-bold ltr text-left">
+                <textarea id="ship-address" placeholder="العنوان بالتفصيل" class="w-full p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800 dark:text-white outline-none h-28 font-bold"></textarea>
+                <button id="save-shipping-btn" class="w-full bg-black dark:bg-white dark:text-black text-white py-6 rounded-2xl font-black uppercase tracking-widest active:scale-95 transition-all">تأكيد الطلب</button>
             </div>
+            <button onclick="document.getElementById('shipping-modal').classList.add('hidden')" class="w-full mt-4 text-[10px] font-black text-zinc-400 uppercase tracking-widest">إلغاء</button>
         </div>
     </div>
 
+    <!-- Cart Drawer -->
     <div id="cart-drawer" class="fixed inset-0 z-[2400] bg-black/40 hidden text-right">
-        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-sm bg-white dark:bg-zinc-900 p-10 flex flex-col transform translate-x-full transition-transform duration-500">
-            <h2 class="text-4xl font-black italic logo-font mb-10 dark:text-white">My Bag</h2>
+        <div id="cart-inner" class="absolute left-0 top-0 h-full w-full max-w-sm bg-white dark:bg-zinc-900 p-10 flex flex-col transform -translate-x-full transition-transform duration-500">
+            <h2 class="text-4xl font-black italic logo-font mb-10 dark:text-white">سلة التسوق</h2>
             <div id="cart-items" class="flex-1 overflow-y-auto space-y-5"></div>
             <div class="pt-8 border-t dark:border-zinc-800 mt-6">
                 <div class="flex justify-between font-black text-2xl mb-8 italic dark:text-white"><span>Total</span><span id="cart-total">0 EGP</span></div>
-                <button id="checkout-cart-btn" class="w-full bg-black dark:bg-white dark:text-black text-white py-6 rounded-[2rem] font-black uppercase text-xs tracking-widest">Checkout</button>
+                <button id="checkout-cart-btn" class="w-full bg-black dark:bg-white dark:text-black text-white py-6 rounded-[2rem] font-black uppercase text-xs tracking-widest">إتمام الشراء</button>
             </div>
-            <button id="cart-close" class="mt-6 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-center">Close Drawer</button>
+            <button id="cart-close" class="mt-6 text-[10px] font-black text-zinc-400 uppercase tracking-widest text-center">إغلاق</button>
         </div>
     </div>
 
@@ -244,45 +246,65 @@
         const rdb = getDatabase(app);
         const DB_ROOT = "es_v_admin_pro"; 
 
-        let profile = null; let cart = [];
-        let curImg = ""; let curSz = ""; let isDirect = false;
-        let currentProductId = "";
+        let profile = null; 
+        let cart = [];
+        let curImg = ""; let curSz = ""; let isDirect = false; let currentProductId = "";
 
         const showNotify = (msg, color="#000") => {
-            Toastify({ text: msg, duration: 3000, style: { background: color, borderRadius: "20px", fontWeight: "bold" } }).showToast();
+            Toastify({ text: msg, duration: 3000, gravity: "top", position: "center", style: { background: color, borderRadius: "20px", fontWeight: "bold" } }).showToast();
         };
 
-        // --- Dark/Light Mode ---
-        const modeToggle = document.getElementById('mode-toggle');
-        const handleTheme = (theme) => {
-            if (theme === 'dark') { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); }
-            else { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); }
-        };
-        modeToggle.onclick = () => handleTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
-        if (localStorage.getItem('theme') === 'dark') handleTheme('dark');
+        // --- History Logic ---
+        function pushState(page, params = {}) {
+            const url = new URL(window.location);
+            Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+            window.history.pushState({ page }, "", url);
+        }
 
-        // --- Email Notification Logic ---
-        const sendAdminEmail = (orderData) => {
-            const itemsList = orderData.items.map(i => `${i.name} (مقاس: ${i.sz})`).join(', ');
-            const emailParams = {
-                to_name: "Admin",
-                from_name: orderData.shipping.name,
-                order_id: Math.random().toString(36).substr(2, 9).toUpperCase(),
-                customer_name: orderData.shipping.name,
-                customer_phone: orderData.shipping.phone,
-                customer_address: orderData.shipping.address,
-                order_items: itemsList,
-                total_price: orderData.total,
-                reply_to: "no-reply@es-store.com"
-            };
-
-            emailjs.send("service_elshla", "template_es_store", emailParams)
-                .then(() => console.log("Email Sent Successfully!"))
-                .catch((err) => console.error("Email Error:", err));
+        window.onpopstate = (e) => {
+            ['product-modal', 'shipping-modal', 'cart-drawer', 'qr-modal'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            if(e.state && e.state.page) window.showPage(e.state.page, false);
         };
 
-        // --- Core Logic ---
-        onAuthStateChanged(auth, (u) => {
+        // --- Fly Animation ---
+        function flyToCartAnimation(imgSrc) {
+            const startEl = document.getElementById('modal-p-image');
+            const cartEl = document.getElementById('cart-trigger');
+            const startRect = startEl.getBoundingClientRect();
+            const cartRect = cartEl.getBoundingClientRect();
+            const flyImg = document.createElement('img');
+            flyImg.src = imgSrc; flyImg.className = 'fly-item';
+            flyImg.style.top = `${startRect.top}px`; flyImg.style.left = `${startRect.left}px`;
+            flyImg.style.width = `${startRect.width}px`; flyImg.style.height = `${startRect.height}px`;
+            document.body.appendChild(flyImg);
+            setTimeout(() => {
+                flyImg.style.top = `${cartRect.top}px`; flyImg.style.left = `${cartRect.left}px`;
+                flyImg.style.width = '20px'; flyImg.style.height = '20px';
+                flyImg.style.opacity = '0'; flyImg.style.transform = 'rotate(360deg)';
+            }, 50);
+            setTimeout(() => { flyImg.remove(); cartEl.classList.add('scale-125'); setTimeout(() => cartEl.classList.remove('scale-125'), 200); }, 850);
+        }
+
+        // --- Phone Logic ---
+        const phoneInput = document.getElementById('ship-phone');
+        phoneInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if(val.startsWith('0')) val = '+20' + val.substring(1);
+            else if(val && !val.startsWith('+')) {
+                if(val.startsWith('20')) val = '+' + val;
+                else val = '+20' + val;
+            }
+            e.target.value = val;
+        });
+
+        // --- Dashboard Toggle Fix ---
+        document.getElementById('admin-toggle-btn').onclick = () => {
+            const panel = document.getElementById('admin-panel');
+            panel.classList.toggle('hidden');
+        };
+
+        // --- Auth & Data Loading ---
+        onAuthStateChanged(auth, async (u) => {
             const saved = localStorage.getItem('es_session_v4');
             if(saved) {
                 onValue(ref(rdb, `${DB_ROOT}/users/${saved}`), (s) => {
@@ -292,36 +314,41 @@
                         document.getElementById('main-app').classList.remove('hidden');
                         if(profile.role === 'admin') document.getElementById('admin-toggle-btn').classList.remove('hidden');
                         loadData();
+                        checkDeepLink();
                     }
                 });
             }
         });
 
+        function checkDeepLink() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pid = urlParams.get('product');
+            if(pid) {
+                get(ref(rdb, `${DB_ROOT}/products/${pid}`)).then(s => {
+                    if(s.exists()) {
+                        const p = s.val();
+                        window.openProductModal(pid, p.name, p.price, p.image, encodeURIComponent(JSON.stringify(p.colors||[])), encodeURIComponent(JSON.stringify(p.sizes||[])));
+                    }
+                });
+            }
+        }
+
         function loadData() {
             onValue(ref(rdb, `${DB_ROOT}/products`), (snap) => {
                 const grid = document.getElementById('products-grid'); grid.innerHTML = '';
                 const data = snap.val(); if(!data) return;
-                
-                const urlParams = new URLSearchParams(window.location.search);
-                const pIdFromUrl = urlParams.get('product');
-
                 Object.keys(data).reverse().forEach(id => {
                     const p = data[id];
                     const cS = encodeURIComponent(JSON.stringify(p.colors || []));
                     const sS = encodeURIComponent(JSON.stringify(p.sizes || []));
-                    
-                    if (id === pIdFromUrl) {
-                        window.openProductModal(id, p.name, p.price, p.image, cS, sS);
-                    }
-
                     grid.innerHTML += `
-                        <div class="group cursor-pointer" onclick="window.openProductModal('${id}','${p.name}',${p.price},'${p.image}','${cS}','${sS}')">
+                        <div class="group cursor-pointer animate-in fade-in slide-in-from-bottom-5 duration-700" onclick="window.openProductModal('${id}','${p.name}',${p.price},'${p.image}','${cS}','${sS}')">
                             <div class="aspect-[3/4] rounded-[2.5rem] overflow-hidden bg-gray-50 dark:bg-zinc-800 relative">
-                                <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                ${profile.role==='admin'?`<button onclick="event.stopPropagation(); window.delP('${id}')" class="absolute top-4 right-4 bg-red-600 text-white w-8 h-8 rounded-full">×</button>`:''}
+                                <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-110 transition-all duration-700">
+                                ${profile && profile.role==='admin'?`<button onclick="event.stopPropagation(); window.delP('${id}')" class="absolute top-4 right-4 bg-red-600/80 backdrop-blur text-white w-8 h-8 rounded-full">×</button>`:''}
                             </div>
                             <div class="mt-5 px-2 text-center">
-                                <h4 class="font-black italic text-sm uppercase dark:text-white">${p.name}</h4>
+                                <h4 class="font-black italic text-sm uppercase dark:text-white truncate">${p.name}</h4>
                                 <p class="text-zinc-400 font-bold text-xs">${p.price} EGP</p>
                             </div>
                         </div>`;
@@ -334,24 +361,20 @@
                 my.innerHTML = ''; adm.innerHTML = '';
                 const data = snap.val(); if(!data) return;
                 Object.entries(data).reverse().forEach(([id, o]) => {
-                    if(o.userName === profile.name) {
-                        my.innerHTML += `<div class="bg-gray-50 dark:bg-zinc-800 p-6 rounded-[2rem] flex justify-between items-center text-right shadow-sm">
-                            <div><p class="font-black text-xs uppercase dark:text-white">${o.items.map(i=>i.name).join(', ')}</p><p class="text-[10px] text-zinc-400 mt-1 uppercase font-bold">${o.status}</p></div>
+                    if(profile && o.userName === profile.name) {
+                        my.innerHTML += `<div class="bg-gray-50 dark:bg-zinc-800 p-6 rounded-[2rem] flex justify-between items-center text-right shadow-sm border border-transparent hover:border-zinc-200 transition-all">
+                            <div><p class="font-black text-xs uppercase dark:text-white">${o.items.map(i=>i.name).join(', ')}</p><p class="text-[10px] text-zinc-400 mt-1 uppercase font-bold tracking-widest">${o.status}</p></div>
                             <div class="font-black dark:text-white">${o.total}</div>
                         </div>`;
                     }
-                    if(profile.role==='admin') {
-                        // تحضير بيانات الطلب للرسالة
-                        const orderSummary = encodeURIComponent(JSON.stringify(o));
+                    if(profile && profile.role==='admin') {
                         adm.innerHTML += `<div class="bg-white/5 p-6 rounded-3xl text-[10px] space-y-3 border border-white/5">
                             <div class="flex justify-between font-black uppercase text-zinc-400"><span>👤 ${o.userName}</span><span>${o.total}</span></div>
                             <div class="text-white/60">📦 ${o.items.map(i=>i.name).join(' + ')}</div>
                             <div class="text-zinc-500 italic">📞 ${o.shipping.phone} | 📍 ${o.shipping.address}</div>
                             <div class="flex flex-wrap gap-2 pt-2">
-                                <button onclick="window.processOrder('${id}', 'تم التوصيل', '${orderSummary}', 'توصيل')" class="bg-green-600 px-4 py-2 rounded-xl text-white font-bold">توصيل ✅</button>
-                                <button onclick="window.processOrder('${id}', 'مؤجل', '${orderSummary}', 'تأجيل')" class="bg-yellow-600 px-4 py-2 rounded-xl text-white font-bold">تأجيل ⏳</button>
-                                <button onclick="window.processOrder('${id}', 'ملغي', '${orderSummary}', 'إلغاء')" class="bg-orange-600 px-4 py-2 rounded-xl text-white font-bold">إلغاء ❌</button>
-                                <button onclick="window.upStatus('${id}','حذف')" class="bg-red-900/40 px-4 py-2 rounded-xl text-red-400">حذف نهائي</button>
+                                <button onclick="window.processOrder('${id}', 'تم التوصيل', '${encodeURIComponent(JSON.stringify(o))}')" class="bg-green-600/20 text-green-400 border border-green-600/30 px-4 py-2 rounded-xl font-bold">توصيل ✅</button>
+                                <button onclick="window.upStatus('${id}','حذف')" class="bg-red-900/40 px-4 py-2 rounded-xl text-red-400">حذف</button>
                             </div>
                         </div>`;
                     }
@@ -359,46 +382,14 @@
             });
         }
 
-        // منطق معالجة الطلب ورسائل الواتساب المحسنة
-        window.processOrder = async (id, status, orderSummaryRaw, type) => {
-            const o = JSON.parse(decodeURIComponent(orderSummaryRaw));
-            await update(ref(rdb, `${DB_ROOT}/orders/${id}`), { status: status });
-            
-            const itemsText = o.items.map(i => `▫️ *${i.name}* (مقاس: ${i.sz})`).join('%0A');
-            const totalText = `💰 *إجمالي الحساب:* ${o.total}`;
-            const addressText = `📍 *عنوانك:* ${o.shipping.address}`;
-            const customerName = o.shipping.name;
-
-            let mainMsg = "";
-            let header = `أهلاً بك يا ${customerName} في *Es Store* ✨🕶️%0A━━━━━━━━━━━━━━━%0A`;
-            let footer = `%0A━━━━━━━━━━━━━━━%0Aشكراً لاختيارك Es Store، دائماً في خدمتك! 🖤🔥`;
-
-            if(type === 'توصيل') {
-                mainMsg = `🥳 *أخبار رائعة! طلبك تم شحنه!*%0A%0Aالآن طلبك في الطريق إليك وهو عبارة عن:%0A${itemsText}%0A%0A${totalText}%0A${addressText}%0A%0A🚚 سيتصل بك المندوب قريباً جداً، خليك جاهز! 😍✨`;
-            } else if(type === 'تأجيل') {
-                mainMsg = `⏳ *بخصوص طلبك من Es Store*%0A%0Aحابين نعرفك إننا أجلنا موعد التسليم لضمان وصول القطع في أفضل حالة أو حسب الاتفاق..%0A%0A📦 *تفاصيل الطلب المؤجل:*%0A${itemsText}%0A%0Aسيتم التواصل معك لتحديد موعد جديد في أقرب وقت! 🕒💙`;
-            } else if(type === 'إلغاء') {
-                mainMsg = `💔 *نعتذر منك، تم إلغاء الطلب*%0A%0Aبناءً على طلبك أو لعدم توفر القطعة حالياً، تم إلغاء طلبك لـ:%0A${itemsText}%0A%0Aنتمنى نشوفك قريباً في كوليكشن جديد يعجبك! 🫶✨`;
-            }
-            
-            const fullMsg = header + mainMsg + footer;
-            const waUrl = `https://wa.me/${o.shipping.phone.replace(/[^0-9]/g, '')}?text=${fullMsg}`;
-            window.open(waUrl, '_blank');
-            showNotify(`تم التحديث لـ ${status} وإرسال التفاصيل 📩`, "#10b981");
-        };
-
         window.openProductModal = (id, n, p, img, cJ, sJ) => {
             currentProductId = id;
-            const colors = cJ ? JSON.parse(decodeURIComponent(cJ)) : [];
-            const sizes = sJ ? JSON.parse(decodeURIComponent(sJ)) : [];
+            const colors = JSON.parse(decodeURIComponent(cJ));
+            const sizes = JSON.parse(decodeURIComponent(sJ));
             document.getElementById('modal-p-image').src = img;
             document.getElementById('modal-p-name').innerText = n;
             document.getElementById('modal-p-price').innerText = p + " EGP";
             curImg = img; curSz = sizes[0] || "";
-            
-            const shareUrl = `${window.location.origin}${window.location.pathname}?product=${id}`;
-            const qrEl = document.getElementById('qr-code'); qrEl.innerHTML = "";
-            new QRCode(qrEl, { text: shareUrl, width: 65, height: 65 });
 
             const cl = document.getElementById('modal-colors-list'); cl.innerHTML = '';
             if(colors.length) {
@@ -406,7 +397,12 @@
                 colors.forEach((c, idx) => {
                     const dot = document.createElement('div'); dot.className = `color-dot ${idx===0?'active':''}`;
                     dot.style.backgroundColor = c.hex;
-                    dot.onclick = () => { document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active')); dot.classList.add('active'); document.getElementById('modal-p-image').src = c.img; curImg = c.img; };
+                    dot.onclick = () => { 
+                        document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('active')); 
+                        dot.classList.add('active'); 
+                        document.getElementById('modal-p-image').src = c.img; 
+                        curImg = c.img; 
+                    };
                     cl.appendChild(dot);
                 });
             } else document.getElementById('modal-colors-area').classList.add('hidden');
@@ -416,23 +412,176 @@
                 document.getElementById('modal-sizes-area').classList.remove('hidden');
                 sizes.forEach((s, idx) => {
                     const btn = document.createElement('button'); btn.className = `size-btn ${idx===0?'active':''}`; btn.innerText = s;
-                    btn.onclick = () => { document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); curSz = s; };
+                    btn.onclick = () => { 
+                        document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active')); 
+                        btn.classList.add('active'); 
+                        curSz = s; 
+                    };
                     sl.appendChild(btn);
                 });
             } else document.getElementById('modal-sizes-area').classList.add('hidden');
 
             document.getElementById('product-modal').classList.remove('hidden');
+            pushState('product', { product: id });
         };
 
-        document.getElementById('share-p-btn').onclick = () => {
-            const shareUrl = `${window.location.origin}${window.location.pathname}?product=${currentProductId}`;
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                showNotify("🔗 تم نسخ الرابط المباشر للمنتج!", "#000");
+        // --- Share & QR ---
+        document.getElementById('share-product-btn').onclick = async () => {
+            const url = `${window.location.origin}${window.location.pathname}?product=${currentProductId}`;
+            if (navigator.share) {
+                navigator.share({ title: document.getElementById('modal-p-name').innerText, url: url });
+            } else {
+                const dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                dummy.value = url; dummy.select();
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                showNotify("تم نسخ الرابط للمشاركة 🔗");
+            }
+        };
+
+        document.getElementById('qr-trigger-btn').onclick = () => {
+            const url = `${window.location.origin}${window.location.pathname}?product=${currentProductId}`;
+            document.getElementById('qrcode').innerHTML = '';
+            new QRCode(document.getElementById("qrcode"), { text: url, width: 200, height: 200 });
+            document.getElementById('qr-modal').classList.remove('hidden');
+        };
+
+        // --- Order & EmailJS ---
+        document.getElementById('save-shipping-btn').onclick = async () => {
+            const sh = { 
+                name: document.getElementById('ship-fullname').value, 
+                phone: document.getElementById('ship-phone').value, 
+                address: document.getElementById('ship-address').value 
+            };
+            if(!sh.name || !sh.phone || !sh.address) return showNotify("⚠️ أكمل البيانات","red");
+            
+            const items = isDirect ? [{ name: document.getElementById('modal-p-name').innerText, price: parseInt(document.getElementById('modal-p-price').innerText), sz: curSz, img: curImg, qty: 1 }] : cart;
+            const total = items.reduce((acc, i) => acc + (i.price * i.qty), 0);
+            
+            // 1. Save to Firebase
+            await push(ref(rdb, `${DB_ROOT}/orders`), { userName: profile.name, items, total, shipping: sh, status: 'Processing', timestamp: Date.now() });
+            
+            // 2. Send Email via EmailJS
+            const itemsList = items.map(i => `${i.name} (${i.sz}) x${i.qty}`).join('\n');
+            emailjs.send("service_xsnqf3u", "template_y8p7d8o", {
+                from_name: profile.name,
+                customer_name: sh.name,
+                customer_phone: sh.phone,
+                customer_address: sh.address,
+                order_items: itemsList,
+                total_price: total + " EGP",
+                message: `طلب جديد من ${profile.name}`
+            }).catch(err => console.error("Email Error:", err));
+
+            if(!isDirect) cart = [];
+            window.updateCartUI();
+            ['shipping-modal', 'product-modal', 'cart-drawer'].forEach(m=>document.getElementById(m).classList.add('hidden'));
+            showNotify("🚀 تم استلام طلبك!","#10b981");
+            window.showPage('orders');
+        };
+
+        // --- Helper Functions ---
+        window.updateCartUI = () => {
+            document.getElementById('cart-count').innerText = cart.reduce((acc, i) => acc + i.qty, 0);
+            const container = document.getElementById('cart-items'); container.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, idx) => {
+                total += item.price * item.qty;
+                container.innerHTML += `<div class="flex items-center gap-4 bg-gray-50 dark:bg-zinc-800 p-4 rounded-3xl">
+                    <img src="${item.img}" class="w-16 h-16 object-cover rounded-xl shadow-md">
+                    <div class="flex-1"><h4 class="font-black text-[10px] dark:text-white uppercase">${item.name}</h4><p class="text-[9px] text-zinc-400 font-bold">${item.sz} | ${item.price} EGP</p></div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="window.changeQty(${idx},-1)" class="w-6 h-6 bg-white dark:bg-zinc-700 rounded-lg text-xs font-black dark:text-white shadow-sm">-</button>
+                        <span class="text-xs font-black dark:text-white w-4 text-center">${item.qty}</span>
+                        <button onclick="window.changeQty(${idx},1)" class="w-6 h-6 bg-white dark:bg-zinc-700 rounded-lg text-xs font-black dark:text-white shadow-sm">+</button>
+                    </div>
+                </div>`;
             });
+            document.getElementById('cart-total').innerText = total + " EGP";
         };
 
-        // --- Button Handlers ---
-        document.getElementById('next-btn').onclick = () => { if(document.getElementById('user-name-input').value) { document.getElementById('step-1').classList.add('hidden'); document.getElementById('step-2').classList.remove('hidden'); } };
+        window.changeQty = (idx, delta) => { cart[idx].qty += delta; if(cart[idx].qty < 1) cart.splice(idx, 1); window.updateCartUI(); };
+        window.showPage = (id, push = true) => {
+            document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
+            document.getElementById(`page-${id}`).classList.remove('hidden');
+            document.getElementById('hero-section').classList.toggle('hidden', id !== 'home');
+            document.querySelectorAll('.nav-tab').forEach(t=>t.classList.add('opacity-40'));
+            document.getElementById(`tab-${id}`).classList.remove('opacity-40');
+            if(push) pushState(id);
+        };
+
+        // UI Listeners
+        document.getElementById('modal-add-btn').onclick = () => {
+            const name = document.getElementById('modal-p-name').innerText;
+            const price = parseInt(document.getElementById('modal-p-price').innerText);
+            cart.push({ name, price, sz: curSz, img: curImg, qty: 1 });
+            flyToCartAnimation(curImg);
+            window.updateCartUI();
+            showNotify("✅ تمت الإضافة للسلة");
+        };
+
+        document.getElementById('checkout-cart-btn').onclick = () => {
+            if(!cart.length) return showNotify("السلة فارغة","red");
+            isDirect = false;
+            document.getElementById('shipping-modal').classList.remove('hidden');
+        };
+
+        document.getElementById('checkout-direct-btn').onclick = () => {
+            isDirect = true;
+            document.getElementById('shipping-modal').classList.remove('hidden');
+        };
+
+        document.getElementById('cart-trigger').onclick = () => {
+            document.getElementById('cart-drawer').classList.remove('hidden');
+            setTimeout(() => document.getElementById('cart-inner').classList.remove('-translate-x-full'), 10);
+        };
+
+        document.getElementById('cart-close').onclick = () => {
+            document.getElementById('cart-inner').classList.add('-translate-x-full');
+            setTimeout(() => document.getElementById('cart-drawer').classList.add('hidden'), 500);
+        };
+
+        document.getElementById('close-p-modal').onclick = () => {
+            document.getElementById('product-modal').classList.add('hidden');
+            window.history.back();
+        };
+
+        document.getElementById('add-product-btn').onclick = async () => {
+            const p = { 
+                name: document.getElementById('p-name').value, 
+                price: document.getElementById('p-price').value, 
+                image: document.getElementById('p-main-img').value, 
+                sizes: document.getElementById('p-sizes').value.split(','), 
+                colors: [] 
+            };
+            document.querySelectorAll('#colors-input-list > div').forEach(div => {
+                p.colors.push({ img: div.querySelector('.c-img').value, hex: div.querySelector('.c-hex').value });
+            });
+            await push(ref(rdb, `${DB_ROOT}/products`), p);
+            showNotify("✅ تم النشر");
+        };
+
+        document.getElementById('add-color-input-btn').onclick = () => {
+            const container = document.getElementById('colors-input-list');
+            const div = document.createElement('div'); div.className = "flex gap-2 p-2 bg-white/5 rounded-2xl";
+            div.innerHTML = `<input type="text" placeholder="رابط صورة اللون" class="flex-1 bg-transparent p-2 text-xs c-img outline-none"><input type="color" class="w-10 h-10 rounded-xl c-hex cursor-pointer"><button onclick="this.parentElement.remove()" class="text-red-500 px-2 font-black">×</button>`;
+            container.appendChild(div);
+        };
+
+        document.getElementById('mode-toggle').onclick = () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        };
+        if(localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+
+        document.getElementById('next-btn').onclick = () => {
+            if(document.getElementById('user-name-input').value) {
+                document.getElementById('step-1').classList.add('hidden');
+                document.getElementById('step-2').classList.remove('hidden');
+            }
+        };
+
         document.getElementById('auth-final-btn').onclick = async () => {
             const n = document.getElementById('user-name-input').value.trim();
             const p = document.getElementById('user-pass-input').value.trim();
@@ -441,58 +590,18 @@
                 await signInAnonymously(auth);
                 await set(ref(rdb, `${DB_ROOT}/users/${n}`), { name: n, password: p, role: (n.toLowerCase()==='admin'?'admin':'user') });
             } else if(snap.val().password !== p) return showNotify("⚠️ كلمة المرور خاطئة", "#f00");
-            localStorage.setItem('es_session_v4', n);
-            location.reload();
+            localStorage.setItem('es_session_v4', n); location.reload();
         };
 
-        document.getElementById('save-shipping-btn').onclick = async () => {
-            const sh = { name: document.getElementById('ship-fullname').value, phone: document.getElementById('ship-phone').value, address: document.getElementById('ship-address').value };
-            if(!sh.name || !sh.phone || !sh.address) return showNotify("⚠️ بيانات الشحن ناقصة", "#f00");
-            const items = isDirect ? [{ name: document.getElementById('modal-p-name').innerText, price: parseInt(document.getElementById('modal-p-price').innerText), sz: curSz, img: curImg, qty: 1 }] : cart;
-            const total = isDirect ? document.getElementById('modal-p-price').innerText : document.getElementById('cart-total').innerText;
-            const orderData = { userName: profile.name, items, total, shipping: sh, status: 'Processing', timestamp: Date.now() };
-            
-            await push(ref(rdb, `${DB_ROOT}/orders`), orderData);
-            sendAdminEmail(orderData);
-            
-            document.getElementById('shipping-modal').classList.add('hidden');
-            document.getElementById('product-modal').classList.add('hidden');
-            showNotify("🚀 تم إرسال طلبك وسيصلك إيميل تأكيد!", "#10b981");
-        };
-
-        document.getElementById('add-product-btn').onclick = async () => {
-            const n = document.getElementById('p-name').value; const p = document.getElementById('p-price').value; 
-            const s = document.getElementById('p-sizes').value.split(',').map(x=>x.trim());
-            const cols = [];
-            document.querySelectorAll('#colors-input-list .flex').forEach(d => {
-                const img = d.querySelector('.c-img').value; const hex = d.querySelector('.c-hex').value;
-                if(img) cols.push({img, hex});
-            });
-            await push(ref(rdb, `${DB_ROOT}/products`), { name: n, price: p, image: cols[0].img, sizes: s, colors: cols, timestamp: Date.now() });
-            showNotify("✨ Published!"); location.reload();
-        };
-
-        window.delP = (id) => { if(confirm("حذف؟")) remove(ref(rdb, `${DB_ROOT}/products/${id}`)); };
-        window.upStatus = (id, st) => { if(st==='حذف') remove(ref(rdb, `${DB_ROOT}/orders/${id}`)); };
-        window.showPage = (id) => {
-            document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
-            document.getElementById(`page-${id}`).classList.remove('hidden');
-            document.getElementById('hero-section').classList.toggle('hidden', id !== 'home');
-        };
-        document.getElementById('admin-toggle-btn').onclick = () => document.getElementById('admin-panel').classList.toggle('hidden');
-        document.getElementById('checkout-direct-btn').onclick = () => { isDirect = true; document.getElementById('shipping-modal').classList.remove('hidden'); };
-        document.getElementById('close-p-modal').onclick = () => {
-            document.getElementById('product-modal').classList.add('hidden');
-            const url = new URL(window.location);
-            url.searchParams.delete('product');
-            window.history.pushState({}, '', url);
-        };
         document.getElementById('logout-btn').onclick = () => { localStorage.clear(); location.reload(); };
-        window.addColorInput = () => {
-            const container = document.getElementById('colors-input-list');
-            const div = document.createElement('div'); div.className = "flex gap-2 animate-in slide-in-from-right duration-300";
-            div.innerHTML = `<input type="text" placeholder="رابط" class="flex-1 bg-white/5 p-3 rounded-xl text-xs c-img"><input type="color" class="w-12 h-12 rounded-xl c-hex cursor-pointer"><button onclick="this.parentElement.remove()" class="text-red-500 font-black">×</button>`;
-            container.appendChild(div);
+
+        window.delP = (id) => { if(confirm("حذف المنتج؟")) remove(ref(rdb, `${DB_ROOT}/products/${id}`)); };
+        window.upStatus = (id, st) => { if(st==='حذف') remove(ref(rdb, `${DB_ROOT}/orders/${id}`)); };
+        window.processOrder = async (id, status, oRaw) => {
+            const o = JSON.parse(decodeURIComponent(oRaw));
+            await update(ref(rdb, `${DB_ROOT}/orders/${id}`), { status: status });
+            const msg = `أهلاً ${o.shipping.name} ✨%0Aطلبك في Es Store تم تحديثه لـ: ${status}%0A💰 الإجمالي: ${o.total}%0A🚚 المندوب سيتواصل معك!`;
+            window.open(`https://wa.me/${o.shipping.phone.replace('+', '')}?text=${msg}`, '_blank');
         };
     </script>
 </body>
