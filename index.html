@@ -549,39 +549,43 @@
         window.delP = (id) => { if(confirm("حذف المنتج؟")) remove(ref(rdb, `${DB_ROOT}/products/${id}`)); };
         window.upStatus = (id, st) => { if(st==='حذف') remove(ref(rdb, `${DB_ROOT}/orders/${id}`)); };
         window.processOrder = async (id, status, oRaw) => {
-    const o = JSON.parse(decodeURIComponent(oRaw));
-    
-    // تحديث الحالة في قاعدة البيانات
-    await update(ref(rdb, `${DB_ROOT}/orders/${id}`), { status: status });
+            try {
+                const o = JSON.parse(decodeURIComponent(oRaw));
+                
+                // 1. تحديث الحالة في قاعدة البيانات
+                await update(ref(rdb, `${DB_ROOT}/orders/${id}`), { status: status });
 
-    // تجهيز قائمة المنتجات بشكل منظم
-    const itemsList = o.items.map(i => 
-        `🛍️ *${i.name}*\n📏 المقاس: ${i.sz}\n🎨 اللون: ${i.hex}\n🔢 الكمية: ${i.qty}`
-    ).join('\n\n');
+                // 2. تجهيز قائمة المنتجات بشكل احترافي مع إيموجيات
+                const itemsList = o.items.map(i => 
+                    `🛍️ *${i.name}*\n📏 المقاس: ${i.sz}\n🎨 اللون: ${i.hex}\n🔢 الكمية: ${i.qty}`
+                ).join('\n\n');
 
-    // تجهيز نص الرسالة
-    const message = 
+                // 3. صياغة الرسالة الكاملة
+                const message = 
 `✨ *تحديث بخصوص طلبك من Es Store* ✨
 
 أهلاً يا ${o.shipping.name} 👋
 
-طلبك الآن حالته: *${status}* ✅
+نود إبلاغك بأن طلبك الآن حالته: *${status}* ✅
 
 📦 *تفاصيل المنتجات:*
 ${itemsList}
 
 ---
-💰 *الإجمالي:* ${o.total}
-📍 *العنوان:* ${o.shipping.address}
+💰 *إجمالي المبلغ:* ${o.total} EGP
+📍 *عنوان الشحن:* ${o.shipping.address}
 📞 *رقم التواصل:* ${o.shipping.phone}
 
-🚚 المندوب سيتواصل معك قريباً. شكراً لاختيارك Es Store! 🖤`;
+🚚 المندوب سيتواصل معك قريباً لتسليم الطلب. شكراً لثقتك في Es Store! 🖤`;
 
-    // تحويل النص لرابط واتساب
-    const whatsappUrl = `https://wa.me/${o.shipping.phone.replace('+', '')}?text=${encodeURIComponent(message)}`;
-    
-    window.open(whatsappUrl, '_blank');
-};
+                // 4. فتح الواتساب
+                const whatsappUrl = `https://wa.me/${o.shipping.phone.replace('+', '')}?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+                
+            } catch (error) {
+                console.error("Error processing order:", error);
+                alert("حدث خطأ أثناء معالجة الطلب، تأكد من صحة البيانات.");
+            }
         };
     </script>
 </body>
