@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Es Store | الرئيسية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #c8a96e;
+            --accent-light: #e8d5b0;
+        }
+        .logo-font { font-family: 'Playfair Display', serif; }
+        body { font-family: 'Cairo', sans-serif; }
+
+        /* Product card image zoom */
+        .product-card:hover img { transform: scale(1.08); }
+
+        /* Gold shimmer on logo */
+        .logo-shine {
+            background: linear-gradient(90deg, #fff 0%, var(--accent) 50%, #fff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine 4s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        /* Hero overlay gradient */
+        .hero-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.1) 100%);
+        }
+
+        /* Card fade-in on load */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-up { animation: fadeUp 0.6s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Gold divider */
+        .gold-line { height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        /* Dark mode card bg */
+        .dark .card-bg { background-color: #18181b; }
+        .card-bg { background-color: #f4f4f5; }
+
+        /* Nav link hover underline */
+        .nav-link { position: relative; padding-bottom: 2px; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-link.active { color: var(--accent); }
+    </style>
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="bg-white dark:bg-zinc-950 transition-colors duration-500">
+
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-[100] bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-900">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="index.html" class="logo-font text-4xl font-black italic dark:text-white">Es</a>
+            <div class="flex items-center gap-8 text-[11px] font-black uppercase tracking-widest dark:text-white">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="shop.html" class="nav-link">Shop</a>
+                <a href="orders.html" class="nav-link">Orders</a>
+                <!-- Dark mode toggle -->
+                <button class="t-toggle" onclick="toggleTheme()" title="تبديل الوضع"></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="h-screen relative flex items-end justify-center bg-zinc-900 overflow-hidden">
+        <img src="https://images.pexels.com/photos/1884581/pexels-photo-1884581.jpeg"
+             class="absolute inset-0 w-full h-full object-cover opacity-80">
+        <div class="hero-overlay absolute inset-0"></div>
+        <div class="relative text-center text-white px-4 pb-24">
+            <p class="text-[10px] tracking-[0.6em] uppercase text-zinc-300 mb-6">مجموعة 2026</p>
+            <h1 class="logo-font text-7xl md:text-9xl font-black italic mb-4 logo-shine">Premium Menswear</h1>
+            <div class="gold-line w-40 mx-auto my-6"></div>
+            <p class="text-sm tracking-widest text-zinc-300 mb-10">استكشف أناقة حقيقية — قطع صُممت لتدوم</p>
+            <a href="shop.html"
+               class="inline-block border border-[var(--accent)] text-[var(--accent)] px-12 py-4 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-[var(--accent)] hover:text-black transition-all duration-300">
+                Shop Now
+            </a>
+        </div>
+    </header>
+
+    <!-- NEW ARRIVALS -->
+    <section class="max-w-7xl mx-auto px-6 py-28">
+        <div class="flex justify-between items-end mb-14">
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--accent)] mb-2">وصل حديثاً</p>
+                <h2 class="text-5xl font-black italic logo-font dark:text-white">New Arrivals</h2>
+            </div>
+            <a href="shop.html" class="text-[10px] font-black border-b-2 border-[var(--accent)] pb-1 text-[var(--accent)] hover:opacity-70 transition">عرض الكل ←</a>
+        </div>
+        <div class="gold-line mb-14"></div>
+        <div id="latest-grid" class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <!-- skeleton -->
+            <div class="animate-pulse"><div class="aspect-[3/4] rounded-3xl card-bg mb-4"></div><div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mx-auto mb-2"></div><div class="h-2 bg-zinc-100 dark:bg-zinc-700 rounded w-1/2 mx-auto"></div></div>
+            <div class="animate-pulse"><div class="aspect-[3/4] rounded-3xl card-bg mb-4"></div><div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mx-auto mb-2"></div><div class="h-2 bg-zinc-100 dark:bg-zinc-700 rounded w-1/2 mx-auto"></div></div>
+            <div class="animate-pulse hidden md:block"><div class="aspect-[3/4] rounded-3xl card-bg mb-4"></div><div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mx-auto mb-2"></div><div class="h-2 bg-zinc-100 dark:bg-zinc-700 rounded w-1/2 mx-auto"></div></div>
+            <div class="animate-pulse hidden md:block"><div class="aspect-[3/4] rounded-3xl card-bg mb-4"></div><div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mx-auto mb-2"></div><div class="h-2 bg-zinc-100 dark:bg-zinc-700 rounded w-1/2 mx-auto"></div></div>
+        </div>
+    </section>
+
+    <!-- BEST SELLERS -->
+    <section class="bg-zinc-50 dark:bg-zinc-900/40 py-28 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-14">
+                <p class="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--accent)] mb-2">الأكثر طلباً</p>
+                <h2 class="text-5xl font-black italic logo-font dark:text-white">Best Sellers</h2>
+                <div class="gold-line w-32 mx-auto mt-6"></div>
+            </div>
+            <div id="best-sellers-grid" class="grid grid-cols-2 md:grid-cols-4 gap-10">
+                <div class="animate-pulse"><div class="aspect-[3/4] rounded-3xl card-bg mb-4"></div><div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mx-auto mb-2"></div><div class="h-2 bg-zinc-100 dark:bg-zinc-700 rounded w-1/2 mx-auto"></div></div>
+                <div class="animate-pulse"><div class="aspect-[3/4] rounded-3xl card-bg mb-4"></div><div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mx-auto mb-2"></div><div class="h-2 bg-zinc-100 dark:bg-zinc-700 rounded w-1/2 mx-auto"></div></div>
+                <div class="animate-pulse hidden md:block"><div class="aspect-[3/4] rounded-3xl card-bg mb-4"></div><div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mx-auto mb-2"></div><div class="h-2 bg-zinc-100 dark:bg-zinc-700 rounded w-1/2 mx-auto"></div></div>
+                <div class="animate-pulse hidden md:block"><div class="aspect-[3/4] rounded-3xl card-bg mb-4"></div><div class="h-3 bg-zinc-200 dark:bg-zinc-800 rounded w-3/4 mx-auto mb-2"></div><div class="h-2 bg-zinc-100 dark:bg-zinc-700 rounded w-1/2 mx-auto"></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 text-center border-t border-zinc-100 dark:border-zinc-900">
+        <p class="logo-font text-3xl italic dark:text-white mb-2">Es</p>
+        <p class="text-[9px] tracking-widest text-zinc-400 uppercase">© 2026 Es Store — Premium Menswear</p>
+    </footer>
+
+    <script type="module">
+
+        // Apply theme from settings
+        (function() {
+            if (localStorage.getItem('es_theme') === 'dark') document.documentElement.classList.add('dark');
+        })();
+        window.addEventListener('storage', e => {
+            if (e.key === 'es_theme' || e.key === 'es_theme_update') {
+                document.documentElement.classList.toggle('dark', localStorage.getItem('es_theme') === 'dark');
+            }
+        });
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+        import { rdb, ref, onValue, DB_ROOT } from './fire.js';
+
+        // Dark mode
+        window.toggleDark = () => {
+            document.documentElement.classList.toggle('dark');
+            document.getElementById('theme-icon').textContent =
+                document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        };
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.getElementById('theme-icon').textContent = '☀️';
+        }
+
+        function renderList(arr) {
+            return arr.map(([id, p], i) => {
+                const img = p.mainImage || (p.colors && p.colors[0]?.images?.[0]) || p.image || '';
+                return `
+                <div class="product-card group cursor-pointer fade-up delay-${i+1}"
+                     onclick="location.href='product.html?id=${id}'">
+                    <div class="aspect-[3/4] rounded-3xl overflow-hidden card-bg relative shadow-md">
+                        <img src="${img}" class="w-full h-full object-cover transition duration-700"
+                             onerror="this.src='https://images.pexels.com/photos/1884581/pexels-photo-1884581.jpeg'">
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition duration-500"></div>
+                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 translate-y-10 group-hover:translate-y-0 transition duration-500">
+                            <span class="bg-[var(--accent)] text-black text-[8px] px-5 py-2 rounded-full font-black uppercase tracking-widest shadow-xl whitespace-nowrap">عرض المنتج</span>
+                        </div>
+                    </div>
+                    <div class="mt-5 text-center px-2">
+                        <h4 class="font-black italic text-xs uppercase dark:text-white truncate">${p.name}</h4>
+                        <p class="text-[var(--accent)] font-bold text-[11px] mt-1">${p.price} EGP</p>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        onValue(ref(rdb, `${DB_ROOT}/products`), (snap) => {
+            const data = snap.val();
+            if (!data) {
+                document.getElementById('latest-grid').innerHTML = '<p class="col-span-4 text-center text-zinc-400 py-10">لا توجد منتجات حالياً</p>';
+                document.getElementById('best-sellers-grid').innerHTML = '';
+                return;
+            }
+            const arr = Object.entries(data).reverse();
+            document.getElementById('latest-grid').innerHTML = renderList(arr.slice(0, 4));
+            document.getElementById('best-sellers-grid').innerHTML = renderList(arr.slice(4, 8));
+        });
+    </script>
+</body>
+</html>
